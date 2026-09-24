@@ -1,0 +1,347 @@
+[
+  {
+    "id": "the-three-twisted-sisters-circuit",
+    "route": "The Three Twisted Sisters Circuit",
+    "category": "Twisties & Canyons",
+    "color": "#e74c3c",
+    "distance_mi": 174.0,
+    "waypoints": [
+      "Leakey",
+      "Camp Wood",
+      "Vanderpool",
+      "Medina"
+    ],
+    "via": "FM 337 -> FM 335 -> FM 336 -> FM 337 (100-mi canyon loop)",
+    "geojson": "routes/the-three-twisted-sisters-circuit.geojson",
+    "gpx": "gpx/the-three-twisted-sisters-circuit.gpx"
+  },
+  {
+    "id": "willow-city-loop-enchanted-rock-run",
+    "route": "Willow City Loop & Enchanted Rock Run",
+    "category": "Twisties & Canyons",
+    "color": "#e74c3c",
+    "distance_mi": 35.7,
+    "waypoints": [
+      "Fredericksburg",
+      "Willow City",
+      "Enchanted Rock"
+    ],
+    "via": "TX 16 -> RM 1323 -> Willow City Loop -> FM 965",
+    "geojson": "routes/willow-city-loop-enchanted-rock-run.geojson",
+    "gpx": "gpx/willow-city-loop-enchanted-rock-run.gpx"
+  },
+  {
+    "id": "devil-s-backbone-scenic-ridge",
+    "route": "Devil's Backbone Scenic Ridge",
+    "category": "Twisties & Canyons",
+    "color": "#e74c3c",
+    "distance_mi": 34.3,
+    "waypoints": [
+      "Wimberley",
+      "Fischer",
+      "Blanco"
+    ],
+    "via": "RM 12 -> RM 32 -> US 281",
+    "geojson": "routes/devil-s-backbone-scenic-ridge.geojson",
+    "gpx": "gpx/devil-s-backbone-scenic-ridge.gpx"
+  },
+  {
+    "id": "balcones-escarpment-twisties",
+    "route": "Balcones Escarpment Twisties",
+    "category": "Twisties & Canyons",
+    "color": "#e74c3c",
+    "distance_mi": 29.1,
+    "waypoints": [
+      "Marble Falls",
+      "Cow Creek",
+      "Liberty Hill"
+    ],
+    "via": "FM 1431 -> Cow Creek Rd (FM 1174) -> RM 1869",
+    "geojson": "routes/balcones-escarpment-twisties.geojson",
+    "gpx": "gpx/balcones-escarpment-twisties.gpx"
+  },
+  {
+    "id": "lime-creek-road-lake-travis-loop",
+    "route": "Lime Creek Road & Lake Travis Loop",
+    "category": "Twisties & Canyons",
+    "color": "#e74c3c",
+    "distance_mi": 26.7,
+    "waypoints": [
+      "Cedar Park",
+      "Lime Creek",
+      "Volente"
+    ],
+    "via": "FM 2769 -> Lime Creek Rd -> Volente -> Bullick Hollow Rd",
+    "geojson": "routes/lime-creek-road-lake-travis-loop.geojson",
+    "gpx": "gpx/lime-creek-road-lake-travis-loop.gpx"
+  },
+  {
+    "id": "highland-lakes-circuit",
+    "route": "Highland Lakes Circuit",
+    "category": "Lakes & Rivers",
+    "color": "#2980b9",
+    "distance_mi": 43.2,
+    "waypoints": [
+      "Burnet",
+      "Lake Buchanan",
+      "Inks Lake",
+      "Marble Falls"
+    ],
+    "via": "TX 29 -> RM 2341 -> RM 690 -> Park Road 4 -> Longhorn Cavern",
+    "geojson": "routes/highland-lakes-circuit.geojson",
+    "gpx": "gpx/highland-lakes-circuit.gpx"
+  },
+  {
+    "id": "kingsland-lake-lbj-loop",
+    "route": "Kingsland & Lake LBJ Loop",
+    "category": "Lakes & Rivers",
+    "color": "#2980b9",
+    "distance_mi": 47.5,
+    "waypoints": [
+      "Marble Falls",
+      "Kingsland",
+      "Packsaddle Mtn"
+    ],
+    "via": "US 281 -> Park Road 4 -> RM 2900 -> RM 2233 -> US 71 -> RM 2147",
+    "geojson": "routes/kingsland-lake-lbj-loop.geojson",
+    "gpx": "gpx/kingsland-lake-lbj-loop.gpx"
+  },
+  {
+    "id": "guadalupe-river-road-hunt-sweep",
+    "route": "Guadalupe River Road & Hunt Sweep",
+    "category": "Lakes & Rivers",
+    "color": "#2980b9",
+    "distance_mi": 54.6,
+    "waypoints": [
+      "Kerrville",
+      "Ingram",
+      "Hunt",
+      "Guadalupe River"
+    ],
+    "via": "TX 39 -> FM 1340 (North Fork Guadalupe River)",
+    "geojson": "routes/guadalupe-river-road-hunt-sweep.geojson",
+    "gpx": "gpx/guadalupe-river-road-hunt-sweep.gpx"
+  },
+  {
+    "id": "blanco-river-valley-fm-165-loop",
+    "route": "Blanco River Valley & FM 165 Loop",
+    "category": "Lakes & Rivers",
+    "color": "#2980b9",
+    "distance_mi": 70.6,
+    "waypoints": [
+      "Blanco",
+      "Henly",
+      "Wimberley"
+    ],
+    "via": "FM 165 -> Henly -> Wimberley -> RM 2325",
+    "geojson": "routes/blanco-river-valley-fm-165-loop.geojson",
+    "gpx": "gpx/blanco-river-valley-fm-165-loop.gpx"
+  },
+  {
+    "id": "llano-river-castell-run",
+    "route": "Llano River & Castell Run",
+    "category": "Lakes & Rivers",
+    "color": "#2980b9",
+    "distance_mi": 43.2,
+    "waypoints": [
+      "Llano",
+      "Castell",
+      "Mason"
+    ],
+    "via": "FM 152 -> Castell -> FM 2323",
+    "geojson": "routes/llano-river-castell-run.geojson",
+    "gpx": "gpx/llano-river-castell-run.gpx"
+  },
+  {
+    "id": "sisterdale-kendalia-luckenbach-run",
+    "route": "Sisterdale, Kendalia & Luckenbach Run",
+    "category": "German Towns & Culture",
+    "color": "#8e44ad",
+    "distance_mi": 54.0,
+    "waypoints": [
+      "Boerne",
+      "Sisterdale",
+      "Kendalia",
+      "Luckenbach"
+    ],
+    "via": "FM 1376 -> FM 473 -> Kendalia -> Luckenbach",
+    "geojson": "routes/sisterdale-kendalia-luckenbach-run.geojson",
+    "gpx": "gpx/sisterdale-kendalia-luckenbach-run.gpx"
+  },
+  {
+    "id": "pedernales-wine-country-sweep",
+    "route": "Pedernales Wine Country Sweep",
+    "category": "German Towns & Culture",
+    "color": "#8e44ad",
+    "distance_mi": 77.7,
+    "waypoints": [
+      "Fredericksburg",
+      "Tivydale",
+      "Stonewall",
+      "Johnson City"
+    ],
+    "via": "FM 2093 Tivydale -> US 290 Wine Road -> Stonewall",
+    "geojson": "routes/pedernales-wine-country-sweep.geojson",
+    "gpx": "gpx/pedernales-wine-country-sweep.gpx"
+  },
+  {
+    "id": "german-heritage-trail",
+    "route": "German Heritage Trail",
+    "category": "German Towns & Culture",
+    "color": "#8e44ad",
+    "distance_mi": 61.2,
+    "waypoints": [
+      "Fredericksburg",
+      "Old San Antonio Rd",
+      "Sisterdale",
+      "Blanco"
+    ],
+    "via": "Old San Antonio Rd -> FM 473 -> Blanco",
+    "geojson": "routes/german-heritage-trail.geojson",
+    "gpx": "gpx/german-heritage-trail.gpx"
+  },
+  {
+    "id": "fitzhugh-hamilton-pool-craft-beverage-run",
+    "route": "Fitzhugh & Hamilton Pool Craft Beverage Run",
+    "category": "German Towns & Culture",
+    "color": "#8e44ad",
+    "distance_mi": 15.9,
+    "waypoints": [
+      "Bee Cave",
+      "Hamilton Pool",
+      "Fitzhugh Rd",
+      "Dripping Springs"
+    ],
+    "via": "Hamilton Pool Rd -> Fitzhugh Rd -> Dripping Springs",
+    "geojson": "routes/fitzhugh-hamilton-pool-craft-beverage-run.geojson",
+    "gpx": "gpx/fitzhugh-hamilton-pool-craft-beverage-run.gpx"
+  },
+  {
+    "id": "north-gabriel-river-sweep",
+    "route": "North Gabriel River Sweep",
+    "category": "Savannah & Prairie Sweeps",
+    "color": "#27ae60",
+    "distance_mi": 22.1,
+    "waypoints": [
+      "TX 29 @ CR 200",
+      "North Gabriel River",
+      "Liberty Hill",
+      "US 183"
+    ],
+    "via": "TX 29 @ CR 200 -> CR 200 -> CR 201 -> CR 214 -> RM 243 -> CR 210 -> US 183",
+    "geojson": "routes/north-gabriel-river-sweep.geojson",
+    "gpx": "gpx/north-gabriel-river-sweep.gpx"
+  },
+  {
+    "id": "oakalla-berry-creek-valley-run",
+    "route": "Oakalla & Berry Creek Valley Run",
+    "category": "Savannah & Prairie Sweeps",
+    "color": "#27ae60",
+    "distance_mi": 35.5,
+    "waypoints": [
+      "US 183",
+      "Oakalla",
+      "Berry Creek Valley",
+      "Burnet"
+    ],
+    "via": "US 183 -> FM 963 North to Oakalla -> FM 963 West through Berry Creek Valley -> Burnet",
+    "geojson": "routes/oakalla-berry-creek-valley-run.geojson",
+    "gpx": "gpx/oakalla-berry-creek-valley-run.gpx"
+  },
+  {
+    "id": "lost-pines-bastrop-state-park-loop",
+    "route": "Lost Pines & Bastrop State Park Loop",
+    "category": "Savannah & Prairie Sweeps",
+    "color": "#27ae60",
+    "distance_mi": 27.8,
+    "waypoints": [
+      "Bastrop",
+      "Lost Pines",
+      "Buescher State Park"
+    ],
+    "via": "FM 1441 -> Park Road 1 -> Smithville -> Bastrop",
+    "geojson": "routes/lost-pines-bastrop-state-park-loop.geojson",
+    "gpx": "gpx/lost-pines-bastrop-state-park-loop.gpx"
+  },
+  {
+    "id": "round-top-fayetteville-country-lane",
+    "route": "Round Top & Fayetteville Country Lane",
+    "category": "Savannah & Prairie Sweeps",
+    "color": "#27ae60",
+    "distance_mi": 28.3,
+    "waypoints": [
+      "Fayetteville",
+      "Round Top",
+      "Shelby"
+    ],
+    "via": "FM 1291 -> Round Top -> FM 2503 -> Shelby",
+    "geojson": "routes/round-top-fayetteville-country-lane.geojson",
+    "gpx": "gpx/round-top-fayetteville-country-lane.gpx"
+  },
+  {
+    "id": "mason-mountain-ridge-run",
+    "route": "Mason Mountain Ridge Run",
+    "category": "Savannah & Prairie Sweeps",
+    "color": "#27ae60",
+    "distance_mi": 57.3,
+    "waypoints": [
+      "Mason",
+      "Art",
+      "Streeter"
+    ],
+    "via": "TX 29 West -> Art Road -> US 87 -> Mason",
+    "geojson": "routes/mason-mountain-ridge-run.geojson",
+    "gpx": "gpx/mason-mountain-ridge-run.gpx"
+  },
+  {
+    "id": "lake-victor-burnet-backcountry-sweep",
+    "route": "Lake Victor & Burnet Backcountry Sweep",
+    "category": "Savannah & Prairie Sweeps",
+    "color": "#27ae60",
+    "distance_mi": 25.0,
+    "waypoints": [
+      "Burnet",
+      "RM 2340",
+      "Lake Victor"
+    ],
+    "via": "RM 2340 -> Lake Victor -> Watson -> Burnet",
+    "geojson": "routes/lake-victor-burnet-backcountry-sweep.geojson",
+    "gpx": "gpx/lake-victor-burnet-backcountry-sweep.gpx"
+  },
+  {
+    "id": "bertram-rm-1174-rm-963-loop",
+    "route": "Bertram, RM 1174 & RM 963 Loop",
+    "category": "Savannah & Prairie Sweeps",
+    "color": "#27ae60",
+    "distance_mi": 54.6,
+    "waypoints": [
+      "183 / TX 29 Crossing",
+      "Bertram",
+      "RM 1174",
+      "RM 963",
+      "US 183"
+    ],
+    "via": "TX 29 West -> Bertram -> RM 1174 North -> RM 963 East -> US 183 South",
+    "geojson": "routes/bertram-rm-1174-rm-963-loop.geojson",
+    "gpx": "gpx/bertram-rm-1174-rm-963-loop.gpx"
+  },
+  {
+    "id": "briggs-oakalla-rm-963-loop",
+    "route": "Briggs, Oakalla & RM 963 Loop",
+    "category": "Savannah & Prairie Sweeps",
+    "color": "#27ae60",
+    "distance_mi": 23.1,
+    "waypoints": [
+      "US 183 / CR 218",
+      "Briggs",
+      "FM 2657",
+      "Oakalla",
+      "RM 963",
+      "Watson",
+      "US 183"
+    ],
+    "via": "US 183 -> Briggs -> FM 2657 North -> Oakalla -> RM 963 West -> Watson -> US 183 South",
+    "geojson": "routes/briggs-oakalla-rm-963-loop.geojson",
+    "gpx": "gpx/briggs-oakalla-rm-963-loop.gpx"
+  }
+]
