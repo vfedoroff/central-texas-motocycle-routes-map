@@ -75,3 +75,8 @@ Interactive map of Central Texas motorcycle routes, road-snapped to real roads.
 ## Deploy
 
 The live site is deployed from `index.html` via Netlify Drop to the `central-texas-routes-map` project.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE) — Copyright (c) 2026 Vadym Fedorov.
+

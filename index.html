@@ -535,6 +535,16 @@
       line-height: 1.4;
     }
 
+    .footer-license-link {
+      color: #64748b;
+      text-decoration: underline;
+      transition: color 0.15s ease;
+    }
+
+    .footer-license-link:hover {
+      color: var(--primary);
+    }
+
     .footer-links {
       display: flex;
       align-items: center;
@@ -971,7 +981,7 @@
     <!-- SIDEBAR FOOTER -->
     <footer class="sidebar-footer">
       <div class="footer-copy">
-        &copy; <span id="current-year">2026</span> Central Texas Motorcycle Routes Map
+        &copy; <span id="current-year">2026</span> Vadym Fedorov • <a href="https://github.com/vfedoroff/central-texas-motocycle-routes-map/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" class="footer-license-link">MIT License</a>
       </div>
       <div class="footer-links">
         <a href="https://github.com/vfedoroff/central-texas-motocycle-routes-map" target="_blank" rel="noopener noreferrer" class="footer-repo-link" title="View Source on GitHub">
@@ -1090,7 +1100,7 @@
   var yearEl = document.getElementById('current-year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
   if (map.attributionControl) {
-    map.attributionControl.addAttribution('<a href="https://github.com/vfedoroff/central-texas-motocycle-routes-map" target="_blank" rel="noopener">&copy; Central Texas Motorcycle Routes</a>');
+    map.attributionControl.addAttribution('<a href="https://github.com/vfedoroff/central-texas-motocycle-routes-map" target="_blank" rel="noopener">&copy; 2026 Vadym Fedorov (MIT)</a>');
   }
 
   // Basemap tile layers (100% free, no API keys required)
