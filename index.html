@@ -1017,7 +1017,7 @@
       <span class="focus-label">Route Focus:</span>
       <span class="focus-route-name" id="focus-route-name">...</span>
     </div>
-    <button id="btn-exit-focus" class="btn-exit-focus" title="Restore previous routes (Esc)">✕ Show All Routes</button>
+    <button id="btn-exit-focus" class="btn-exit-focus" onclick="window.exitRouteFocus()" title="Show all routes and zoom out (Esc)">✕ Show All Routes</button>
   </div>
 
   <!-- MAP CONTAINER -->
@@ -1092,6 +1092,7 @@
     zoomControl: false,
     attributionControl: true
   }).setView([30.35, -98.45], 8);
+  window.map = map;
 
   // Position zoom control in bottom right
   L.control.zoom({ position: 'bottomright' }).addTo(map);
@@ -1543,38 +1544,31 @@
     }
   }
 
-  function exitFocusMode() {
-    if (focusedRouteId === null) return;
-
+  function exitFocusMode(resetBounds) {
     var prevId = focusedRouteId;
     focusedRouteId = null;
 
     // Reset styles on previously focused route
-    if (routeLayers[prevId]) {
+    if (prevId && routeLayers[prevId]) {
       routeLayers[prevId].setStyle({ weight: 4.5, opacity: 0.85 });
     }
 
-    // Restore previous visibility snapshot
-    if (preFocusVisibilitySnapshot) {
-      routesData.forEach(function(r) {
-        var shouldShow = preFocusVisibilitySnapshot[r.id] !== false;
-        layerVisibility[r.id] = shouldShow;
-        if (routeLayers[r.id]) {
-          if (shouldShow && !map.hasLayer(routeLayers[r.id])) map.addLayer(routeLayers[r.id]);
-          else if (!shouldShow && map.hasLayer(routeLayers[r.id])) map.removeLayer(routeLayers[r.id]);
-        }
-        var card = document.getElementById('card-' + r.id);
-        if (card) {
-          var cb = card.querySelector('.route-toggle-checkbox');
-          if (cb) cb.checked = shouldShow;
-          if (shouldShow) card.classList.remove('inactive');
-          else card.classList.add('inactive');
-        }
-      });
-      preFocusVisibilitySnapshot = null;
-    }
+    // Always ensure all routes are visible and restored
+    routesData.forEach(function(r) {
+      layerVisibility[r.id] = true;
+      if (routeLayers[r.id] && !map.hasLayer(routeLayers[r.id])) {
+        map.addLayer(routeLayers[r.id]);
+      }
+      var card = document.getElementById('card-' + r.id);
+      if (card) {
+        var cb = card.querySelector('.route-toggle-checkbox');
+        if (cb) cb.checked = true;
+        card.classList.remove('inactive');
+      }
+    });
+    preFocusVisibilitySnapshot = null;
 
-    // Hide banner
+    // Hide floating banner unconditionally
     var banner = document.getElementById('focus-banner');
     if (banner) banner.style.display = 'none';
 
@@ -1593,7 +1587,20 @@
     map.closePopup();
     setTimeout(function() {
       isTransitioningFocus = false;
-    }, 150);
+    }, 200);
+
+    // Zoom out map to show all routes
+    if (resetBounds !== false) {
+      var allBounds = L.latLngBounds([]);
+      Object.values(routeLayers).forEach(function(lyr) {
+        if (lyr && lyr.getBounds && lyr.getBounds().isValid()) {
+          allBounds.extend(lyr.getBounds());
+        }
+      });
+      if (allBounds.isValid()) {
+        map.fitBounds(allBounds, { padding: [50, 50], animate: true, duration: 0.6 });
+      }
+    }
   }
 
   function zoomToRoute(id) {
@@ -1605,34 +1612,33 @@
     enterFocusMode(id);
   };
 
-  window.exitRouteFocus = function() {
-    exitFocusMode();
+  window.exitRouteFocus = function(resetBounds) {
+    exitFocusMode(resetBounds !== false);
   };
+
+  // Prevent Leaflet map from capturing clicks / touches on the floating focus banner
+  var focusBannerEl = document.getElementById('focus-banner');
+  if (focusBannerEl && window.L && L.DomEvent) {
+    L.DomEvent.disableClickPropagation(focusBannerEl);
+    L.DomEvent.disableScrollPropagation(focusBannerEl);
+  }
 
   // Focus Mode map & UI event listeners
   var btnExitFocus = document.getElementById('btn-exit-focus');
   if (btnExitFocus) {
     btnExitFocus.addEventListener('click', function(e) {
-      e.stopPropagation();
-      exitFocusMode();
+      if (e) e.stopPropagation();
+      exitFocusMode(true);
+    });
+    btnExitFocus.addEventListener('touchend', function(e) {
+      if (e) e.stopPropagation();
+      exitFocusMode(true);
     });
   }
 
-  map.on('popupclose', function() {
-    if (focusedRouteId && !isTransitioningFocus) {
-      exitFocusMode();
-    }
-  });
-
-  map.on('click', function(e) {
-    if (focusedRouteId && !isTransitioningFocus) {
-      exitFocusMode();
-    }
-  });
-
   window.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && focusedRouteId) {
-      exitFocusMode();
+    if (e.key === 'Escape') {
+      exitFocusMode(true);
     }
   });
 

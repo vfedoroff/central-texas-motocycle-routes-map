@@ -32,8 +32,14 @@ The repository uses a **modular route architecture**:
 When curating or adding a route:
 1. **Paved Surfaces Only**: Must be suitable for street motorcycles. Exclude dirt/unpaved county roads (e.g. Burnet County unpaved roads).
 2. **Loop or Scenic Corridor**: Prefer circular day-loops (15–180 miles) or scenic riverside/ridge corridors.
-3. **No Dead-End Spurs**: Prune accidental out-and-back ranch road spurs or junction overshoot detours.
-4. **Snapped to Roads**: Road geometries must be snapped to actual highway and road centerlines (via OSRM, GraphHopper, or real GPS traces).
+3. **No Dead-End Spurs or Parking Lot Incursions**: 
+   - **Never start or terminate inside a gas station, business parking lot, or private driveway** (e.g. QuikTrip, Murphy USA, storage facilities). All loops must begin and end directly on the public highway/road centerline intersection.
+   - Prune accidental out-and-back ranch road spurs, cul-de-sac diversions, and neighborhood loops.
+4. **Snapped to Roads (Junction-to-Junction Routing Only)**: 
+   - Road geometries must be snapped to actual highway and road centerlines (via OSRM, GraphHopper, or real GPS traces).
+   - When generating routes with routing engines, route exclusively between verified primary highway intersection nodes. **Do NOT pass arbitrary intermediate mid-block waypoints** that risk snapping off-centerline into residential subdivisions or frontage roads.
+5. **Zero-Spur Topology Requirement**: 
+   - All loops must pass an automated topology audit with 0 unwanted spurs or self-intersecting detours before bundling.
 
 ---
 
@@ -78,6 +84,8 @@ Create `routes/<id>.geojson` as a standard GeoJSON Feature or FeatureCollection.
   }
 }
 ```
+
+> **Automated Spur Pruning**: Before saving your coordinates, always run the topology check or prune detours. If a route had intermediate waypoints that diverted into a neighborhood, cul-de-sac, or parking lot, prune the detour slice so the coordinate stream stays strictly on the continuous highway centerline. For closed loops, verify that `coordinates[0]` and `coordinates[-1]` meet at the exact same road centerline intersection node.
 
 ---
 
@@ -164,17 +172,29 @@ Add the new route to the numbered catalog in [`README.md`](README.md) under its 
 
 ## 4. Verification & Testing
 
-1. **Verify Files Exist & JSON Syntax**:
+1. **Verify Files Exist, Manifest Syntax & Topology**:
    ```bash
-   python3 -c "import json; routes = json.load(open('routes.json')); print(f'{len(routes)} valid routes')"
+   python3 scripts/validate_routes.py <your-route-id>
    ```
-2. **Launch Local Server**:
+   This script verifies:
+   - Route metadata schema in `routes.json`.
+   - Matching `.geojson` and `.gpx` files exist.
+   - **Zero unintended spurs or neighborhood detours** along the route coordinates.
+
+2. **Verify Full Manifest & Deliverables**:
+   ```bash
+   python3 scripts/validate_routes.py
+   ```
+
+3. **Launch Local Server**:
    ```bash
    python3 -m http.server 8000
    ```
-3. **Check in Browser (`http://localhost:8000`)**:
+
+4. **Check in Browser (`http://localhost:8000`)**:
    - The new route appears in the sidebar list.
    - Dynamic route count badge and category pill count increment automatically.
    - Searching by town, road name, or title highlights the new route card.
    - Clicking the card pans/zooms to the route bounding box and opens its popup.
+   - Clicking `✕ Show All Routes` closes focus mode, unhides all routes, and zooms out smoothly.
    - Direct GPX download button works.

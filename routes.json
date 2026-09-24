@@ -76,6 +76,31 @@
     "gpx": "gpx/lime-creek-road-lake-travis-loop.gpx"
   },
   {
+    "id": "austin-to-llano-hill-country-blast",
+    "route": "Austin to Llano - Hill Country Blast",
+    "category": "Twisties & Canyons",
+    "color": "#e74c3c",
+    "distance_mi": 179.5,
+    "waypoints": [
+      "Austin (Four Points)",
+      "Mansfield Dam",
+      "Bee Cave",
+      "Spicewood",
+      "Llano",
+      "Inks Lake",
+      "Park Road 4",
+      "Longhorn Cavern",
+      "Burnet",
+      "Cow Creek Road",
+      "Balcones Canyonlands",
+      "Lime Creek Road",
+      "Volente"
+    ],
+    "via": "RM 620 South -> TX 71 West -> Llano -> TX 29 East -> RM 1431 -> Park Road 4 (Inks Lake & Longhorn Cavern) -> US 281 North -> Burnet -> RM 1174 South (Cow Creek Rd) -> RM 1431 East -> Lime Creek Rd -> Volente -> Bullick Hollow Rd",
+    "geojson": "routes/austin-to-llano-hill-country-blast.geojson",
+    "gpx": "gpx/austin-to-llano-hill-country-blast.gpx"
+  },
+  {
     "id": "highland-lakes-circuit",
     "route": "Highland Lakes Circuit",
     "category": "Lakes & Rivers",
@@ -153,6 +178,51 @@
     "gpx": "gpx/llano-river-castell-run.gpx"
   },
   {
+    "id": "saturday-dawn-lake-travis-loop",
+    "route": "Saturday Dawn Lake Travis Loop",
+    "category": "Lakes & Rivers",
+    "color": "#2980b9",
+    "distance_mi": 98.8,
+    "waypoints": [
+      "Cedar Park (QT)",
+      "Lago Vista",
+      "Marble Falls",
+      "Round Mountain",
+      "Cypress Mill",
+      "Hamilton Pool",
+      "Bee Cave",
+      "Mansfield Dam"
+    ],
+    "via": "RM 1431 West -> US 281 South -> East RM 962 -> Hamilton Pool Rd -> TX 71 East -> RM 620 North -> Anderson Mill Rd",
+    "geojson": "routes/saturday-dawn-lake-travis-loop.geojson",
+    "gpx": "gpx/saturday-dawn-lake-travis-loop.gpx"
+  },
+  {
+    "id": "saturday-dawn-lake-granger-loop",
+    "route": "Saturday Dawn Lake Granger Loop",
+    "category": "Lakes & Rivers",
+    "color": "#2980b9",
+    "distance_mi": 105.2,
+    "waypoints": [
+      "Cedar Park (Murphy USA)",
+      "Ronald Reagan Blvd",
+      "RM 2338",
+      "Georgetown",
+      "Weir",
+      "Granger",
+      "Granger Lake Dam",
+      "Circleville",
+      "Taylor",
+      "Coupland",
+      "Hutto",
+      "Chandler Road",
+      "University Blvd"
+    ],
+    "via": "Ronald Reagan Blvd North -> FM 3405 -> RM 2338 South -> FM 971 East -> Granger -> FM 1331 (Granger Lake Dam) -> TX 95 South -> Taylor -> FM 1660 -> Chandler Rd -> University Blvd / RM 1431 West",
+    "geojson": "routes/saturday-dawn-lake-granger-loop.geojson",
+    "gpx": "gpx/saturday-dawn-lake-granger-loop.gpx"
+  },
+  {
     "id": "sisterdale-kendalia-luckenbach-run",
     "route": "Sisterdale, Kendalia & Luckenbach Run",
     "category": "German Towns & Culture",
@@ -215,6 +285,31 @@
     "via": "Hamilton Pool Rd -> Fitzhugh Rd -> Dripping Springs",
     "geojson": "routes/fitzhugh-hamilton-pool-craft-beverage-run.geojson",
     "gpx": "gpx/fitzhugh-hamilton-pool-craft-beverage-run.gpx"
+  },
+  {
+    "id": "leander-to-luckenbach-loop",
+    "route": "Leander to Luckenbach Loop",
+    "category": "German Towns & Culture",
+    "color": "#8e44ad",
+    "distance_mi": 219.0,
+    "waypoints": [
+      "Leander",
+      "Nameless Road",
+      "Lago Vista",
+      "Marble Falls",
+      "Willow City Loop",
+      "Fredericksburg",
+      "Luckenbach",
+      "Blanco",
+      "Johnson City",
+      "Cypress Mill",
+      "Shovel Mountain",
+      "Cow Creek Road",
+      "Liberty Hill"
+    ],
+    "via": "Nameless Rd -> RM 1431 West -> US 281 South -> RM 1323 -> Willow City Loop -> TX 16 -> Fredericksburg -> RR 1376 -> Luckenbach -> RR 1888 -> Blanco -> US 281 -> CR 301 -> Shovel Mountain Rd -> TX 71 -> Marble Falls -> RM 1431 -> Cow Creek Rd (FM 1174) -> RM 1869 -> Liberty Hill",
+    "geojson": "routes/leander-to-luckenbach-loop.geojson",
+    "gpx": "gpx/leander-to-luckenbach-loop.gpx"
   },
   {
     "id": "north-gabriel-river-sweep",
