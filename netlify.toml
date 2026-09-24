@@ -65,3 +65,24 @@
     Cache-Control = "public, max-age=604800, stale-while-revalidate=2592000"
     Access-Control-Allow-Origin = "*"
     Content-Type = "application/gpx+xml; charset=utf-8"
+
+# Cache-Control: SEO Files (robots.txt & sitemap.xml)
+[[headers]]
+  for = "/robots.txt"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, must-revalidate"
+    Content-Type = "text/plain; charset=utf-8"
+
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, must-revalidate"
+    Content-Type = "application/xml; charset=utf-8"
+
+# Cache-Control: Social Share & Static Assets
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000, stale-while-revalidate=5184000"
+    Access-Control-Allow-Origin = "*"
+
