@@ -1,0 +1,67 @@
+# Netlify Configuration for Central Texas Motorcycle Routes Map
+# Optimized for Netlify Edge CDN, HTTP/2 multiplexing, and Core Web Vitals (LCP < 1000ms)
+
+[build]
+  command = "python3 scripts/bundle.py"
+  publish = "."
+
+# Global Security & Preconnect Headers (HTTP/2 Early Hints)
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Link = '''
+    <https://cdnjs.cloudflare.com>; rel=preconnect; crossorigin,
+    <https://server.arcgisonline.com>; rel=preconnect; crossorigin,
+    <https://fonts.googleapis.com>; rel=preconnect; crossorigin,
+    <https://fonts.gstatic.com>; rel=preconnect; crossorigin'''
+
+# Cache-Control: index.html must revalidate so deploys are instant
+[[headers]]
+  for = "/"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Cache-Control: Core Route Manifest & Bundled GeoJSON (24h Edge cache with SWR)
+[[headers]]
+  for = "/routes.json"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, stale-while-revalidate=604800"
+    Access-Control-Allow-Origin = "*"
+    Content-Type = "application/json; charset=utf-8"
+
+[[headers]]
+  for = "/texas-routes-v2.geojson"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, stale-while-revalidate=604800"
+    Access-Control-Allow-Origin = "*"
+    Content-Type = "application/geo+json; charset=utf-8"
+
+[[headers]]
+  for = "/texas-routes-v2.gpx"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=2592000"
+    Access-Control-Allow-Origin = "*"
+    Content-Type = "application/gpx+xml; charset=utf-8"
+
+# Cache-Control: Modular Route and GPX assets
+[[headers]]
+  for = "/routes/*.geojson"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=2592000"
+    Access-Control-Allow-Origin = "*"
+    Content-Type = "application/geo+json; charset=utf-8"
+
+[[headers]]
+  for = "/gpx/*.gpx"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=2592000"
+    Access-Control-Allow-Origin = "*"
+    Content-Type = "application/gpx+xml; charset=utf-8"

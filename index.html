@@ -5,13 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
   <title>Central Texas Motorcycle Routes Map</title>
   
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-  
-  <!-- Inter Font -->
+  <!-- Netlify Performance Optimization: Preconnect & DNS Prefetch to Critical Origins -->
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+  <link rel="preconnect" href="https://server.arcgisonline.com" crossorigin>
+  <link rel="dns-prefetch" href="https://server.arcgisonline.com">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Preload Critical Leaflet Resources from cdnjs -->
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" as="script">
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" as="style">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+  
+  <!-- Inter Font -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
 
   <style>
     :root {
@@ -907,11 +918,11 @@
         <span class="brand-icon">🏍️</span>
         <div>
           <h1>Central Texas Routes</h1>
-          <div class="brand-meta" id="header-stats">22 Curated Loops • 1063 Miles</div>
+          <div class="brand-meta" id="header-stats">26 Curated Loops • 1644 Miles</div>
         </div>
       </div>
       <div class="bundle-actions">
-        <a class="btn-bundle primary" href="texas-routes-v2.gpx" download title="Download all 22 routes in one GPX file for Garmin, OSMAnd, Beeline">
+        <a class="btn-bundle primary" href="texas-routes-v2.gpx" download title="Download all 26 routes in one GPX file for Garmin, OSMAnd, Beeline">
           <span>⬇ All GPX (Bundle)</span>
         </a>
         <a class="btn-bundle" href="texas-routes-v2.geojson" download title="Download all routes as single GeoJSON">
@@ -949,15 +960,15 @@
       </div>
 
       <div class="category-pills" id="category-pills">
-        <button class="pill-btn active" data-cat="all">All (22)</button>
+        <button class="pill-btn active" data-cat="all">All (26)</button>
         <button class="pill-btn" data-cat="Twisties & Canyons">
-          <span class="pill-indicator" style="background:#e74c3c"></span>Twisties (5)
+          <span class="pill-indicator" style="background:#e74c3c"></span>Twisties (6)
         </button>
         <button class="pill-btn" data-cat="Lakes & Rivers">
-          <span class="pill-indicator" style="background:#2980b9"></span>Lakes (5)
+          <span class="pill-indicator" style="background:#2980b9"></span>Lakes (7)
         </button>
         <button class="pill-btn" data-cat="German Towns & Culture">
-          <span class="pill-indicator" style="background:#8e44ad"></span>Culture (4)
+          <span class="pill-indicator" style="background:#8e44ad"></span>Culture (5)
         </button>
         <button class="pill-btn" data-cat="Savannah & Prairie Sweeps">
           <span class="pill-indicator" style="background:#27ae60"></span>Savannah (8)
@@ -965,7 +976,7 @@
       </div>
 
       <div class="bulk-bar">
-        <span id="filtered-count">Showing 22 routes</span>
+        <span id="filtered-count">Showing 26 routes</span>
         <div class="bulk-buttons">
           <button class="text-action-btn" id="btn-show-all">Show All</button>
           <button class="text-action-btn" id="btn-hide-all">Hide All</button>
@@ -1026,12 +1037,12 @@
   <!-- LOADING BANNER -->
   <div id="loading" class="loading-banner">
     <div class="loading-spinner"></div>
-    <span id="loading-text">Loading 22 routes...</span>
+    <span id="loading-text">Loading routes...</span>
   </div>
 </div>
 
-<!-- Leaflet JS -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Leaflet JS via Cloudflare CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 
 <script>
 (function() {
@@ -1087,10 +1098,11 @@
     return minD === Infinity ? null : Math.round(minD * 10) / 10;
   }
 
-  // Initialize Map centered on Texas Hill Country
+  // Initialize Map centered on Texas Hill Country (preferCanvas enabled for fast render)
   var map = L.map('map', {
     zoomControl: false,
-    attributionControl: true
+    attributionControl: true,
+    preferCanvas: true
   }).setView([30.35, -98.45], 8);
   window.map = map;
 
@@ -1160,21 +1172,6 @@
 
   sidebarToggleBtn.addEventListener('click', toggleSidebar);
 
-  // Fetch routes manifest
-  fetch('routes.json')
-    .then(function(res) { return res.json(); })
-    .then(function(manifest) {
-      routesData = manifest;
-      updateHeaderStats(routesData);
-      updateCategoryCounts(routesData);
-      renderRouteCards();
-      loadAllRouteGeometries();
-    })
-    .catch(function(err) {
-      console.error('Failed to load routes.json', err);
-      document.getElementById('loading-text').textContent = 'Error loading routes metadata';
-    });
-
   function updateHeaderStats(routes) {
     var totalMiles = routes.reduce(function(acc, r) { return acc + (r.distance_mi || 0); }, 0);
     document.getElementById('header-stats').textContent = routes.length + ' Curated Loops • ' + Math.round(totalMiles) + ' Total Miles';
@@ -1206,72 +1203,141 @@
     });
   }
 
-  // Load GeoJSONs
-  function loadAllRouteGeometries() {
+  // Helper to add a route GeoJSON layer to the map
+  function addRouteLayer(route, geojson) {
+    if (!route || !geojson) return;
+    layerVisibility[route.id] = true;
+    routeGeometries[route.id] = geojson;
+    if (userLocation) {
+      route.userDistMi = calculateRouteDistance(userLocation.lat, userLocation.lng, geojson);
+    }
+    var color = route.color || '#2563eb';
+
+    var layer = L.geoJSON(geojson, {
+      style: {
+        color: color,
+        weight: 4.5,
+        opacity: 0.85,
+        lineCap: 'round',
+        lineJoin: 'round'
+      }
+    });
+
+    // Custom Popup Content
+    var popupContent = buildPopupHtml(route);
+    layer.bindPopup(popupContent, { maxWidth: 320 });
+
+    // Layer events
+    layer.on('mouseover', function() {
+      highlightRoute(route.id, true);
+    });
+    layer.on('mouseout', function() {
+      if (!focusedRouteId) highlightRoute(route.id, false);
+    });
+    layer.on('click', function(e) {
+      L.DomEvent.stopPropagation(e);
+      if (focusedRouteId === route.id) {
+        exitFocusMode();
+      } else {
+        enterFocusMode(route.id);
+      }
+    });
+
+    routeLayers[route.id] = layer;
+    layer.addTo(map);
+  }
+
+  function dismissLoader() {
+    var loader = document.getElementById('loading');
+    if (loader) {
+      loader.style.opacity = '0';
+      setTimeout(function() { loader.style.display = 'none'; }, 250);
+    }
+  }
+
+  function fallbackLoadRoutes(routes) {
     var loaded = 0;
-    var total = routesData.length;
-
-    routesData.forEach(function(route) {
-      layerVisibility[route.id] = true;
-
+    var total = routes.length;
+    if (total === 0) {
+      dismissLoader();
+      return;
+    }
+    routes.forEach(function(route) {
       fetch(route.geojson)
         .then(function(res) { return res.json(); })
         .then(function(geojson) {
-          routeGeometries[route.id] = geojson;
-          if (userLocation) {
-            route.userDistMi = calculateRouteDistance(userLocation.lat, userLocation.lng, geojson);
-          }
-          var color = route.color || '#2563eb';
-
-          var layer = L.geoJSON(geojson, {
-            style: {
-              color: color,
-              weight: 4.5,
-              opacity: 0.85,
-              lineCap: 'round',
-              lineJoin: 'round'
-            }
-          });
-
-          // Custom Popup Content
-          var popupContent = buildPopupHtml(route);
-          layer.bindPopup(popupContent, { maxWidth: 320 });
-
-          // Layer events
-          layer.on('mouseover', function() {
-            highlightRoute(route.id, true);
-          });
-          layer.on('mouseout', function() {
-            if (!focusedRouteId) highlightRoute(route.id, false);
-          });
-          layer.on('click', function(e) {
-            L.DomEvent.stopPropagation(e);
-            if (focusedRouteId === route.id) {
-              exitFocusMode();
-            } else {
-              enterFocusMode(route.id);
-            }
-          });
-
-          routeLayers[route.id] = layer;
-          layer.addTo(map);
-
+          addRouteLayer(route, geojson);
           loaded++;
-          if (loaded === total) {
-            var loader = document.getElementById('loading');
-            loader.style.opacity = '0';
-            setTimeout(function() { loader.style.display = 'none'; }, 300);
-          }
+          if (loaded === total) dismissLoader();
         })
         .catch(function(err) {
           console.error('Error loading geojson for ' + route.id, err);
           loaded++;
-          if (loaded === total) {
-            document.getElementById('loading').style.display = 'none';
-          }
+          if (loaded === total) dismissLoader();
         });
     });
   }
+
+  // Netlify Edge CDN Parallel Fetch: Load routes manifest and bundled GeoJSON simultaneously
+  var manifestPromise = fetch('routes.json')
+    .then(function(res) {
+      if (!res.ok) throw new Error('Status ' + res.status);
+      return res.json();
+    });
+
+  var bundlePromise = fetch('texas-routes-v2.geojson')
+    .then(function(res) {
+      if (!res.ok) throw new Error('Status ' + res.status);
+      return res.json();
+    });
+
+  // 1. Immediately render UI and sidebar cards as soon as manifest arrives (<50ms)
+  manifestPromise
+    .then(function(manifest) {
+      routesData = manifest;
+      updateHeaderStats(routesData);
+      updateCategoryCounts(routesData);
+      renderRouteCards();
+    })
+    .catch(function(err) {
+      console.error('Failed to load routes.json', err);
+      document.getElementById('loading-text').textContent = 'Error loading routes metadata';
+    });
+
+  // 2. Ingest geometries in 1 single pass from single bundled GeoJSON
+  Promise.all([manifestPromise, bundlePromise])
+    .then(function(results) {
+      var manifest = results[0];
+      var bundle = results[1];
+      var routeMap = {};
+      manifest.forEach(function(r) { routeMap[r.id] = r; });
+
+      var features = bundle.features || (bundle.type === 'Feature' ? [bundle] : []);
+      var loadedIds = {};
+
+      features.forEach(function(feat) {
+        var rid = (feat.properties && feat.properties.id) || feat.id;
+        var route = routeMap[rid];
+        if (route) {
+          addRouteLayer(route, feat);
+          loadedIds[rid] = true;
+        }
+      });
+
+      // If any route in manifest wasn't in the bundle, fetch it modularly
+      var missing = manifest.filter(function(r) { return !loadedIds[r.id]; });
+      if (missing.length > 0) {
+        fallbackLoadRoutes(missing);
+      } else {
+        dismissLoader();
+      }
+    })
+    .catch(function(err) {
+      console.warn('Bundle fetch failed, falling back to modular routes:', err);
+      manifestPromise.then(function(manifest) {
+        fallbackLoadRoutes(manifest);
+      });
+    });
 
   function buildPopupHtml(route) {
     var waypointsStr = (route.waypoints || []).join(' → ');

@@ -28,10 +28,26 @@ def bundle():
         if os.path.exists(gj_file):
             with open(gj_file, 'r', encoding='utf-8') as f:
                 data = json.load(f)
+                features_to_add = []
                 if data.get('type') == 'FeatureCollection' and 'features' in data:
-                    bundled_features.extend(data['features'])
+                    features_to_add = data['features']
                 elif data.get('type') == 'Feature':
-                    bundled_features.append(data)
+                    features_to_add = [data]
+
+                for feat in features_to_add:
+                    feat_props = feat.setdefault('properties', {})
+                    feat_props['id'] = item['id']
+                    for k in ['category', 'color', 'distance_mi', 'route', 'via', 'waypoints']:
+                        if k in item and k not in feat_props:
+                            feat_props[k] = item[k]
+                    # Round coordinate precision to 5 decimals (~1.1m precision)
+                    def round_coords(coords):
+                        if isinstance(coords[0], (int, float)):
+                            return [round(coords[0], 5), round(coords[1], 5)]
+                        return [round_coords(c) for c in coords]
+                    if 'geometry' in feat and 'coordinates' in feat['geometry']:
+                        feat['geometry']['coordinates'] = round_coords(feat['geometry']['coordinates'])
+                    bundled_features.append(feat)
         else:
             print(f"Warning: GeoJSON file missing {gj_file}")
 
@@ -42,8 +58,9 @@ def bundle():
 
     geojson_out_path = os.path.join(ROOT_DIR, 'texas-routes-v2.geojson')
     with open(geojson_out_path, 'w', encoding='utf-8') as f:
-        json.dump(bundled_geojson, f, indent=2)
-    print(f"✓ Bundled {len(bundled_features)} features into {geojson_out_path}")
+        # Minified JSON export for fast CDN transfer & low latency
+        json.dump(bundled_geojson, f, separators=(',', ':'))
+    print(f"✓ Bundled {len(bundled_features)} features into {geojson_out_path} (minified, {os.path.getsize(geojson_out_path) / 1024:.1f} KB)")
 
     # 2. Bundle GPX
     gpx_root = ET.Element('gpx', {
