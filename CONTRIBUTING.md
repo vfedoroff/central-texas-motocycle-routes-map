@@ -39,7 +39,6 @@ mise run setup
   - `content/geometry/routes/<id>.geojson`
   - `content/places/<id>.json`
   - `content/roads/<id>.json`
-  - `content/network-paths/routes/<id>.json`
 - **Never edit or commit generated outputs**:
   - `dist/` is generated and git-ignored.
   - Do not manually author GPX or index files.
@@ -58,13 +57,10 @@ cargo xtask clippy
 # 2. Workspace unit and integration tests
 cargo xtask test
 
-# 3. Catalog and topology audit (zero spurs)
+# 3. Catalog validation
 cargo xtask validate
 
-# 4. Optional: run route-lint on your specific route
-cargo run --locked -p route-lint -- --route <your-route-id> --format json
-
-# 5. Local preview build
+# 4. Local preview build
 cargo xtask build --development
 npm run preview
 ```

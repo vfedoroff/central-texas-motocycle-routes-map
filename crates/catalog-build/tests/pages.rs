@@ -124,11 +124,11 @@ fn test_route_without_optional_content() {
     };
 
     let html = render_route_page(&detail, "https://rideatlas.org").expect("render route");
-    assert!(!html.contains("road evidence unverified"));
+    assert!(!html.contains("unverified route"));
     assert!(
         !render_route_page_with_preview(&detail, "https://rideatlas.org", true)
             .unwrap()
-            .contains("road evidence unverified")
+            .contains("unverified route")
     );
 
     // Title, description, canonical
@@ -279,23 +279,23 @@ fn test_place_without_photos_rendered_cleanly() {
     };
 
     let html = render_place_page(&detail, "https://rideatlas.org").expect("render place");
-    assert!(!html.contains("road evidence unverified"));
+    assert!(!html.contains("unverified route"));
     assert!(
         !render_place_page_with_preview(&detail, "https://rideatlas.org", true)
             .unwrap()
-            .contains("road evidence unverified")
+            .contains("unverified route")
     );
     let mut road = detail.clone();
     road.key.kind = ObjectKind::Road;
     assert!(
         !render_road_page_with_preview(&road, "https://rideatlas.org", false)
             .unwrap()
-            .contains("road evidence unverified")
+            .contains("unverified route")
     );
     assert!(
         !render_road_page_with_preview(&road, "https://rideatlas.org", true)
             .unwrap()
-            .contains("road evidence unverified")
+            .contains("unverified route")
     );
     assert!(html.contains("<title>Peaceful Park - Ride Atlas</title>"));
     assert!(html.contains("123 Country Rd, TX"));

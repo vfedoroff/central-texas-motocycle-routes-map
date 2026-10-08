@@ -1,6 +1,6 @@
 use anyhow::Result;
 use catalog_build::{BuildConfig, build_site, validate_build_paths};
-use std::{fs, path::PathBuf};
+use std::fs;
 use tempfile::tempdir;
 
 fn setup_fixture() -> Result<tempfile::TempDir> {
@@ -70,10 +70,9 @@ fn test_successful_dev_build() -> Result<()> {
     let cfg = BuildConfig {
         root: root.clone(),
         out: out.clone(),
-        network: PathBuf::from("data/road-network/graph.json"),
-        config: PathBuf::from("config/road-audit.json"),
+
         environment: "development".to_string(),
-        allow_unverified_routes: true,
+
         ui_dir: None,
     };
 
@@ -115,10 +114,9 @@ fn test_failed_validation_preserves_sentinel() -> Result<()> {
     let cfg = BuildConfig {
         root: root.clone(),
         out: out.clone(),
-        network: PathBuf::from("data/road-network/graph.json"),
-        config: PathBuf::from("config/road-audit.json"),
+
         environment: "development".to_string(),
-        allow_unverified_routes: true,
+
         ui_dir: None,
     };
 
@@ -218,10 +216,9 @@ fn test_successful_ui_composition_and_asset_verification() -> Result<()> {
     let cfg = BuildConfig {
         root: root.clone(),
         out: out.clone(),
-        network: PathBuf::from("data/road-network/graph.json"),
-        config: PathBuf::from("config/road-audit.json"),
+
         environment: "development".to_string(),
-        allow_unverified_routes: true,
+
         ui_dir: Some(ui_dir),
     };
 
@@ -254,9 +251,9 @@ fn test_successful_ui_composition_and_asset_verification() -> Result<()> {
         manifest["wasm"],
         serde_json::json!(["/app/catalog-ui-mock123_bg.wasm"])
     );
-    assert!(!index_html.contains("road evidence unverified"));
+    assert!(!index_html.contains("unverified route"));
     let page = fs::read_to_string(out.join("routes/test-route/index.html"))?;
-    assert!(!page.contains("road evidence unverified"));
+    assert!(!page.contains("unverified route"));
     assert!(
         page.contains("https://central-texas-routes-map.netlify.app/routes/test-route/index.html")
     );
@@ -283,10 +280,9 @@ fn test_ui_composition_rejects_unsafe_reference_and_preserves_output() -> Result
     let cfg = BuildConfig {
         root,
         out: out.clone(),
-        network: PathBuf::from("data/road-network/graph.json"),
-        config: PathBuf::from("config/road-audit.json"),
+
         environment: "development".to_string(),
-        allow_unverified_routes: true,
+
         ui_dir: Some(ui_dir),
     };
     let error = build_site(&cfg).unwrap_err().to_string();
@@ -311,10 +307,9 @@ fn test_ui_composition_rejects_unstaged_asset_attribute() -> Result<()> {
     let cfg = BuildConfig {
         root: root.clone(),
         out: root.join("dist"),
-        network: PathBuf::from("data/road-network/graph.json"),
-        config: PathBuf::from("config/road-audit.json"),
+
         environment: "development".to_string(),
-        allow_unverified_routes: true,
+
         ui_dir: Some(ui_dir),
     };
     assert!(
@@ -338,10 +333,9 @@ fn test_ui_composition_rejects_external_ui_directory() -> Result<()> {
     let cfg = BuildConfig {
         root: root.clone(),
         out: root.join("dist"),
-        network: PathBuf::from("data/road-network/graph.json"),
-        config: PathBuf::from("config/road-audit.json"),
+
         environment: "development".to_string(),
-        allow_unverified_routes: true,
+
         ui_dir: Some(external.path().to_path_buf()),
     };
     assert!(
@@ -375,10 +369,9 @@ fn test_ui_composition_fails_on_missing_referenced_asset() -> Result<()> {
     let cfg = BuildConfig {
         root: root.clone(),
         out: out.clone(),
-        network: PathBuf::from("data/road-network/graph.json"),
-        config: PathBuf::from("config/road-audit.json"),
+
         environment: "development".to_string(),
-        allow_unverified_routes: true,
+
         ui_dir: Some(ui_dir),
     };
 
@@ -391,60 +384,14 @@ fn test_ui_composition_fails_on_missing_referenced_asset() -> Result<()> {
 }
 
 #[test]
-fn test_dev_works_with_missing_evidence_while_production_fails() -> Result<()> {
-    let dir = setup_fixture()?;
-    let root = dir.path().to_path_buf();
-    let out = root.join("dist");
-
-    // 1. Development build succeeds without road network graph
-    let dev_cfg = BuildConfig {
-        root: root.clone(),
-        out: out.clone(),
-        network: PathBuf::from("data/road-network/graph.json"),
-        config: PathBuf::from("config/road-audit.json"),
-        environment: "development".to_string(),
-        allow_unverified_routes: true,
-        ui_dir: None,
-    };
-    build_site(&dev_cfg)?;
-    assert!(out.join("catalog-index.json").exists());
-
-    // 2. Production build fails for the exact same fixture because evidence is missing
-    let prod_out = root.join("dist_prod");
-    let prod_cfg = BuildConfig {
-        root: root.clone(),
-        out: prod_out,
-        network: PathBuf::from("data/road-network/graph.json"),
-        config: PathBuf::from("config/road-audit.json"),
-        environment: "production".to_string(),
-        allow_unverified_routes: false,
-        ui_dir: None,
-    };
-    let prod_result = build_site(&prod_cfg);
-    assert!(prod_result.is_err());
-    let prod_err = prod_result.unwrap_err().to_string();
-    assert!(prod_err.contains("Road network graph not found") || prod_err.contains("audit"));
-
-    let strict_dev_cfg = BuildConfig {
-        environment: "development".to_string(),
-        out: root.join("dist_strict_dev"),
-        ..prod_cfg
-    };
-    assert!(build_site(&strict_dev_cfg).is_err());
-
-    Ok(())
-}
-
-#[test]
-fn production_can_publish_catalog_without_optional_road_audit() -> Result<()> {
+fn production_publishes_catalog() -> Result<()> {
     let dir = setup_fixture()?;
     let cfg = BuildConfig {
         root: dir.path().to_path_buf(),
         out: dir.path().join("dist"),
-        network: PathBuf::from("data/road-network/graph.json"),
-        config: PathBuf::from("config/road-audit.json"),
+
         environment: "production".into(),
-        allow_unverified_routes: true,
+
         ui_dir: None,
     };
     build_site(&cfg)?;

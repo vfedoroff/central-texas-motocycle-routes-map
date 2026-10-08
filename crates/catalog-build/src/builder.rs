@@ -3,10 +3,6 @@ use catalog_model::{
     Catalog, CatalogPayload, ObjectDetail, ObjectKind, RelatedObject, Severity, load_catalog,
     validate_catalog_with_options,
 };
-use catalog_roads::{
-    AuditConfig, RoadGraph, RouteAuditEvidence, RoutePath, compute_config_sha256,
-    current_validator_version, verify_evidence,
-};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use std::{
@@ -25,10 +21,9 @@ use crate::{
 pub struct BuildConfig {
     pub root: PathBuf,
     pub out: PathBuf,
-    pub network: PathBuf,
-    pub config: PathBuf,
+
     pub environment: String, // "development" or "production"
-    pub allow_unverified_routes: bool,
+
     pub ui_dir: Option<PathBuf>,
 }
 
@@ -197,8 +192,7 @@ pub fn build_site(build_config: &BuildConfig) -> Result<()> {
     };
 
     // 2. Schema and topology validation
-    let schema_diags =
-        validate_catalog_with_options(&catalog, !build_config.allow_unverified_routes);
+    let schema_diags = validate_catalog_with_options(&catalog, false);
     let has_errors = schema_diags.iter().any(|d| d.severity == Severity::Error);
     if has_errors {
         for d in &schema_diags {
@@ -207,80 +201,6 @@ pub fn build_site(build_config: &BuildConfig) -> Result<()> {
             }
         }
         bail!("Catalog validation failed with schema/topology error(s)");
-    }
-
-    // 3. Road evidence is an optional audit gate, separate from release settings.
-    if !build_config.allow_unverified_routes {
-        let network_file = if build_config.network.is_absolute() {
-            build_config.network.clone()
-        } else {
-            canonical_root.join(&build_config.network)
-        };
-
-        if !network_file.exists() {
-            bail!(
-                "Road network graph not found at '{}'. Production build requires verified road network.",
-                network_file.display()
-            );
-        }
-
-        let graph_bytes = fs::read(&network_file)?;
-        let graph: RoadGraph = serde_json::from_slice(&graph_bytes)?;
-        let graph_sha256 = graph.canonical_sha256();
-
-        let config_file = if build_config.config.is_absolute() {
-            build_config.config.clone()
-        } else {
-            canonical_root.join(&build_config.config)
-        };
-        let audit_config: AuditConfig = if config_file.exists() {
-            let text = fs::read_to_string(&config_file)?;
-            serde_json::from_str(&text)?
-        } else {
-            AuditConfig::default()
-        };
-        let config_sha256 = compute_config_sha256(&audit_config);
-        let val_ver = current_validator_version();
-
-        for obj in &catalog.objects {
-            if obj.key.kind != ObjectKind::Route {
-                continue;
-            }
-            let route_id = &obj.key.id;
-            let coords = obj.geometry.as_deref().unwrap_or(&[]);
-
-            let path_file =
-                canonical_root.join(format!("content/network-paths/routes/{}.json", route_id));
-            let path_record: Option<RoutePath> = if path_file.exists() {
-                let text = fs::read_to_string(&path_file)?;
-                Some(serde_json::from_str(&text)?)
-            } else {
-                None
-            };
-
-            let evidence_file =
-                canonical_root.join(format!("content/evidence/routes/{}.json", route_id));
-            if !evidence_file.exists() {
-                bail!(
-                    "Missing road audit evidence for route '{}'. Run `cargo xtask audit-roads`.",
-                    route_id
-                );
-            }
-
-            let evidence_text = fs::read_to_string(&evidence_file)?;
-            let evidence: RouteAuditEvidence = serde_json::from_str(&evidence_text)?;
-
-            verify_evidence(
-                &evidence,
-                &obj.key,
-                coords,
-                path_record.as_ref(),
-                &graph_sha256,
-                &config_sha256,
-                &val_ver,
-            )
-            .with_context(|| format!("Evidence verification failed for route '{}'", route_id))?;
-        }
     }
 
     // 4. Staging transaction
@@ -415,7 +335,7 @@ pub fn build_site(build_config: &BuildConfig) -> Result<()> {
                 let page_html = crate::pages::render_route_page_with_preview(
                     &detail,
                     production_url,
-                    build_config.allow_unverified_routes,
+                    build_config.environment == "development",
                 )?;
                 fs::write(page_dir.join("index.html"), page_html)?;
             }
@@ -496,7 +416,7 @@ pub fn build_site(build_config: &BuildConfig) -> Result<()> {
                 let page_html = crate::pages::render_road_page_with_preview(
                     &detail,
                     production_url,
-                    build_config.allow_unverified_routes,
+                    build_config.environment == "development",
                 )?;
                 fs::write(page_dir.join("index.html"), page_html)?;
             }
@@ -555,7 +475,7 @@ pub fn build_site(build_config: &BuildConfig) -> Result<()> {
                 let page_html = crate::pages::render_place_page_with_preview(
                     &detail,
                     production_url,
-                    build_config.allow_unverified_routes,
+                    build_config.environment == "development",
                 )?;
                 fs::write(page_dir.join("index.html"), page_html)?;
             }
@@ -569,8 +489,10 @@ pub fn build_site(build_config: &BuildConfig) -> Result<()> {
     // 8. Generate privacy/index.html
     let privacy_dir = staging_root.join("privacy");
     fs::create_dir_all(&privacy_dir)?;
-    let privacy_html =
-        crate::pages::render_privacy_page(production_url, build_config.allow_unverified_routes)?;
+    let privacy_html = crate::pages::render_privacy_page(
+        production_url,
+        build_config.environment == "development",
+    )?;
     fs::write(privacy_dir.join("index.html"), privacy_html)?;
 
     // 9. Prepare client config (force analytics off in non-production builds)
@@ -599,7 +521,7 @@ pub fn build_site(build_config: &BuildConfig) -> Result<()> {
             compose_ui(
                 ui_dir,
                 staging_root,
-                build_config.allow_unverified_routes,
+                build_config.environment == "development",
                 &config_json,
             )?;
         } else {
@@ -723,7 +645,7 @@ fn validate_head_asset_attributes(head_assets: &str) -> Result<()> {
 fn compose_ui(
     ui_dir: &Path,
     staging_root: &Path,
-    unverified_preview: bool,
+    development_preview: bool,
     config_json: &str,
 ) -> Result<()> {
     let index_file = ui_dir.join("index.html");
@@ -803,7 +725,7 @@ fn compose_ui(
     )?;
 
     // Render the root map template into staging_root/index.html
-    let root_html = crate::pages::render_root_map(&head_assets, unverified_preview, config_json)?;
+    let root_html = crate::pages::render_root_map(&head_assets, development_preview, config_json)?;
     fs::write(staging_root.join("index.html"), root_html)?;
 
     Ok(())

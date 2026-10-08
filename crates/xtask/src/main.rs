@@ -50,30 +50,6 @@ enum Commands {
         #[arg(long)]
         development: bool,
     },
-    /// Restore pinned road network reference graph from compressed zstd
-    NetworkRestore {
-        /// Repository or content root
-        #[arg(long, default_value = ".")]
-        root: PathBuf,
-        /// Report format (text or json)
-        #[arg(long, default_value = "json")]
-        format: String,
-    },
-    /// Audit routes against reference road network and update evidence
-    AuditRoads {
-        /// Repository or content root
-        #[arg(long, default_value = ".")]
-        root: PathBuf,
-        /// Reference road network graph JSON
-        #[arg(long, default_value = "data/road-network/graph.json")]
-        network: PathBuf,
-        /// Audit only a specific route ID
-        #[arg(long)]
-        route: Option<String>,
-        /// Audit configuration JSON
-        #[arg(long, default_value = "config/road-audit.json")]
-        config: PathBuf,
-    },
     /// Compose browser fixture environment for testing
     Fixture {
         /// Repository or content root
@@ -188,51 +164,11 @@ fn run_build(root: &Path, out: &Path, development: bool) -> Result<()> {
     cmd.arg("--format");
     cmd.arg("json");
     if development {
-        cmd.args(["--environment", "development", "--allow-unverified-routes"]);
+        cmd.args(["--environment", "development"]);
     } else {
-        cmd.args(["--environment", "production", "--allow-unverified-routes"]);
+        cmd.args(["--environment", "production"]);
     }
     run_command(&mut cmd, "building static catalog site")
-}
-
-fn run_network_restore(root: &Path, format: &str) -> Result<()> {
-    let mut cmd = Command::new(cargo());
-    cmd.args([
-        "run",
-        "--locked",
-        "-p",
-        "catalog-build",
-        "--",
-        "network-restore",
-        "--root",
-    ]);
-    cmd.arg(root);
-    cmd.arg("--format");
-    cmd.arg(format);
-    run_command(&mut cmd, "restoring reference road network")
-}
-
-fn run_audit_roads(root: &Path, network: &Path, route: Option<&str>, config: &Path) -> Result<()> {
-    let mut cmd = Command::new(cargo());
-    cmd.args([
-        "run",
-        "--locked",
-        "-p",
-        "catalog-build",
-        "--",
-        "audit-roads",
-        "--root",
-    ]);
-    cmd.arg(root);
-    cmd.arg("--network");
-    cmd.arg(network);
-    cmd.arg("--config");
-    cmd.arg(config);
-    if let Some(r) = route {
-        cmd.arg("--route");
-        cmd.arg(r);
-    }
-    run_command(&mut cmd, "auditing road network and generating evidence")
 }
 
 fn run_fixture(root: &Path) -> Result<()> {
@@ -277,13 +213,6 @@ fn main() -> Result<()> {
             out,
             development,
         } => run_build(&root, &out, development)?,
-        Commands::NetworkRestore { root, format } => run_network_restore(&root, &format)?,
-        Commands::AuditRoads {
-            root,
-            network,
-            route,
-            config,
-        } => run_audit_roads(&root, &network, route.as_deref(), &config)?,
         Commands::Fixture { root } => run_fixture(&root)?,
     }
     Ok(())

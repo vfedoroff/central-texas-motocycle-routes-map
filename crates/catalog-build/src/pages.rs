@@ -112,7 +112,7 @@ pub struct RoutePageTemplate<'a> {
     pub canonical_url: &'a str,
     pub detail: &'a ObjectDetail,
     pub note_html: String,
-    pub unverified_preview: bool,
+    pub development_preview: bool,
 }
 
 #[derive(Template)]
@@ -122,7 +122,7 @@ pub struct RoadPageTemplate<'a> {
     pub description: &'a str,
     pub canonical_url: &'a str,
     pub detail: &'a ObjectDetail,
-    pub unverified_preview: bool,
+    pub development_preview: bool,
 }
 
 #[derive(Template)]
@@ -133,7 +133,7 @@ pub struct PlacePageTemplate<'a> {
     pub canonical_url: &'a str,
     pub detail: &'a ObjectDetail,
     pub note_html: String,
-    pub unverified_preview: bool,
+    pub development_preview: bool,
 }
 
 pub fn render_route_page(detail: &ObjectDetail, base_url: &str) -> Result<String, askama::Error> {
@@ -143,7 +143,7 @@ pub fn render_route_page(detail: &ObjectDetail, base_url: &str) -> Result<String
 pub fn render_route_page_with_preview(
     detail: &ObjectDetail,
     base_url: &str,
-    unverified_preview: bool,
+    development_preview: bool,
 ) -> Result<String, askama::Error> {
     let note_html = if let Some(note) = &detail.author_note {
         render_markdown(&note.text)
@@ -160,7 +160,7 @@ pub fn render_route_page_with_preview(
         canonical_url: &canonical_url,
         detail,
         note_html,
-        unverified_preview,
+        development_preview,
     };
 
     template.render()
@@ -173,7 +173,7 @@ pub fn render_road_page(detail: &ObjectDetail, base_url: &str) -> Result<String,
 pub fn render_road_page_with_preview(
     detail: &ObjectDetail,
     base_url: &str,
-    unverified_preview: bool,
+    development_preview: bool,
 ) -> Result<String, askama::Error> {
     let trimmed_base = base_url.trim_end_matches('/');
     let canonical_url = format!("{}/roads/{}/index.html", trimmed_base, detail.key.id);
@@ -183,7 +183,7 @@ pub fn render_road_page_with_preview(
         description: &detail.summary,
         canonical_url: &canonical_url,
         detail,
-        unverified_preview,
+        development_preview,
     };
 
     template.render()
@@ -196,7 +196,7 @@ pub fn render_place_page(detail: &ObjectDetail, base_url: &str) -> Result<String
 pub fn render_place_page_with_preview(
     detail: &ObjectDetail,
     base_url: &str,
-    unverified_preview: bool,
+    development_preview: bool,
 ) -> Result<String, askama::Error> {
     let note_html = if let Some(note) = &detail.author_note {
         render_markdown(&note.text)
@@ -213,7 +213,7 @@ pub fn render_place_page_with_preview(
         canonical_url: &canonical_url,
         detail,
         note_html,
-        unverified_preview,
+        development_preview,
     };
 
     template.render()
@@ -223,18 +223,18 @@ pub fn render_place_page_with_preview(
 #[template(path = "root_map.html")]
 pub struct RootMapTemplate<'a> {
     pub head_assets: &'a str,
-    pub unverified_preview: bool,
+    pub development_preview: bool,
     pub config_json: &'a str,
 }
 
 pub fn render_root_map(
     head_assets: &str,
-    unverified_preview: bool,
+    development_preview: bool,
     config_json: &str,
 ) -> Result<String, askama::Error> {
     let template = RootMapTemplate {
         head_assets,
-        unverified_preview,
+        development_preview,
         config_json,
     };
     template.render()
@@ -247,12 +247,12 @@ pub struct PrivacyPageTemplate<'a> {
     pub description: &'a str,
     pub canonical_url: &'a str,
     pub production_url: &'a str,
-    pub unverified_preview: bool,
+    pub development_preview: bool,
 }
 
 pub fn render_privacy_page(
     production_url: &str,
-    unverified_preview: bool,
+    development_preview: bool,
 ) -> Result<String, askama::Error> {
     let trimmed_base = production_url.trim_end_matches('/');
     let canonical_url = format!("{}/privacy/index.html", trimmed_base);
@@ -261,7 +261,7 @@ pub fn render_privacy_page(
         description: "Privacy policy and analytics disclosure for Ride Atlas.",
         canonical_url: &canonical_url,
         production_url: trimmed_base,
-        unverified_preview,
+        development_preview,
     };
     template.render()
 }

@@ -18,13 +18,11 @@ Browse Central Texas motorcycle routes on an interactive map. Find rides by cate
 A Rust workspace generates a static site with a Leptos/WebAssembly UI and Leaflet map.
 
 ```text
-content/                     Authored routes, geometry, places, roads and audit inputs
-config/                      Site and road-audit settings
+content/                     Authored routes, geometry, places and roads
+config/                      Site settings
 crates/catalog-model/        Domain models and schema validation
-crates/catalog-roads/        Road topology, alignment and audit evidence
 crates/catalog-build/        Static pages, exports and service worker generation
 crates/catalog-ui/           Leptos UI and JavaScript browser adapters
-crates/route-lint/            Read-only route verification CLI
 crates/xtask/                 Build and validation commands
 tests/browser/               Desktop and mobile Playwright tests
 dist/                        Generated site; never edit or commit
@@ -56,15 +54,15 @@ If macOS `rust-lld` cannot locate `libLLVM.dylib`, supply the installed toolchai
 
 ## Route authoring
 
-Edit authored files in `content/` and `config/`. Routes require metadata and canonical road geometry. Verified network paths and audit evidence can be added for optional road audits. Use stable IDs; keep all references consistent. Routes must be paved, follow public road centerlines, avoid parking-lot incursions and unwanted spurs, and cite factual sources. Closed loops must have identical first and last coordinates.
+Edit authored files in `content/` and `config/`. Routes require metadata and canonical road geometry. Use stable IDs; keep all references consistent. Routes must be paved, follow public road centerlines, avoid parking-lot incursions and unwanted spurs, and cite factual sources. Closed loops must have identical first and last coordinates.
 
-See [AGENTS.md](AGENTS.md), [CONTRIBUTING.md](CONTRIBUTING.md) for the authoring and audit workflows. Do not invent verification evidence.
+See [AGENTS.md](AGENTS.md), [CONTRIBUTING.md](CONTRIBUTING.md) for the authoring workflows.
 
 ## Netlify deployment
 
 Netlify publishes `dist/` from the production branch, normally `main`. The build configuration installs the pinned Trunk version and WebAssembly target before running `cargo xtask build`. Node dependencies are installed from `package-lock.json`.
 
-Production builds validate catalog schemas and geometry, generate optimized WebAssembly and static assets, and use production analytics settings. Road-network audits are optional maintenance checks, not deployment prerequisites. To explicitly require road evidence, use `cargo run --locked -p catalog-build -- build --environment production` with the verified network and audit inputs available.
+Production builds validate catalog schemas and geometry, generate optimized WebAssembly and static assets, and use production analytics settings.
 
 After the production build succeeds, commit the authored sources and build configuration, merge into `main`, and push to the connected Git repository. Confirm the Netlify deployment succeeds before treating the live site as updated. Generated `dist/` stays untracked.
 

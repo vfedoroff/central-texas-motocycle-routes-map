@@ -2,7 +2,6 @@ use catalog_model::{
     AuthoredPlace, AuthoredRoad, AuthoredRoute, AuthoredStop, PlaceCategory, RouteType, Surface,
     load_catalog, validate_catalog_with_options,
 };
-use catalog_roads::RoutePath;
 use tempfile::tempdir;
 
 #[test]
@@ -154,63 +153,6 @@ fn test_documentation_road_example_deserializes() {
     assert_eq!(road.id, "rm-1174-north-sweep");
     assert_eq!(road.surface, Surface::Paved);
     assert_eq!(road.surface_evidence.len(), 1);
-}
-
-#[test]
-fn test_documentation_path_example_deserializes() {
-    let path_json = r##"{
-      "schema_version": 1,
-      "key": {
-        "kind": "route",
-        "id": "bertram-rm-1174-rm-963-loop"
-      },
-      "network_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "junctions": [
-        {
-          "node_id": 1001,
-          "label": "TX 29 & RM 1174 Crossing",
-          "group_nodes": null,
-          "entry_node": null,
-          "exit_node": null,
-          "review": null
-        },
-        {
-          "node_id": 1002,
-          "label": "RM 1174 & RM 963 Turn",
-          "group_nodes": null,
-          "entry_node": null,
-          "exit_node": null,
-          "review": null
-        },
-        {
-          "node_id": 1001,
-          "label": "TX 29 Return",
-          "group_nodes": null,
-          "entry_node": null,
-          "exit_node": null,
-          "review": null
-        }
-      ],
-      "edges": [
-        {
-          "way_id": 4827101,
-          "segment_index": 0,
-          "direction": "forward"
-        },
-        {
-          "way_id": 4827102,
-          "segment_index": 0,
-          "direction": "forward"
-        }
-      ],
-      "reviews": []
-    }"##;
-
-    let path: RoutePath =
-        serde_json::from_str(path_json).expect("Documentation path example must deserialize");
-    assert_eq!(path.key.id, "bertram-rm-1174-rm-963-loop");
-    assert_eq!(path.junctions.len(), 3);
-    assert_eq!(path.edges.len(), 2);
 }
 
 #[test]

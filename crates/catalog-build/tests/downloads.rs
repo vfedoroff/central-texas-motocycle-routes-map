@@ -1,7 +1,7 @@
 use anyhow::Result;
 use catalog_build::{BuildConfig, build_site};
 use catalog_model::ObjectDetail;
-use std::{fs, path::PathBuf};
+use std::fs;
 use tempfile::tempdir;
 
 fn setup_fixture() -> Result<tempfile::TempDir> {
@@ -87,10 +87,9 @@ fn test_gpx_coordinates_match_geometry() -> Result<()> {
     let cfg = BuildConfig {
         root: root.clone(),
         out: out.clone(),
-        network: PathBuf::from("data/road-network/graph.json"),
-        config: PathBuf::from("config/road-audit.json"),
+
         environment: "development".to_string(),
-        allow_unverified_routes: true,
+
         ui_dir: None,
     };
 
@@ -126,10 +125,9 @@ fn test_gpx_namespace_valid() -> Result<()> {
     let cfg = BuildConfig {
         root,
         out: out.clone(),
-        network: PathBuf::from("data/road-network/graph.json"),
-        config: PathBuf::from("config/road-audit.json"),
+
         environment: "development".to_string(),
-        allow_unverified_routes: true,
+
         ui_dir: None,
     };
 
@@ -157,10 +155,9 @@ fn test_download_links_resolve() -> Result<()> {
     let cfg = BuildConfig {
         root,
         out: out.clone(),
-        network: PathBuf::from("data/road-network/graph.json"),
-        config: PathBuf::from("config/road-audit.json"),
+
         environment: "development".to_string(),
-        allow_unverified_routes: true,
+
         ui_dir: None,
     };
 
@@ -198,10 +195,9 @@ fn test_no_old_bundles_generated() -> Result<()> {
     let cfg = BuildConfig {
         root,
         out: out.clone(),
-        network: PathBuf::from("data/road-network/graph.json"),
-        config: PathBuf::from("config/road-audit.json"),
+
         environment: "development".to_string(),
-        allow_unverified_routes: true,
+
         ui_dir: None,
     };
 

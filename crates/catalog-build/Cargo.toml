@@ -6,7 +6,6 @@ rust-version.workspace = true
 
 [dependencies]
 catalog-model = { path = "../catalog-model", features = ["native"] }
-catalog-roads = { path = "../catalog-roads" }
 anyhow.workspace = true
 clap.workspace = true
 serde.workspace = true
@@ -16,7 +15,6 @@ pulldown-cmark.workspace = true
 serde_json.workspace = true
 sha2.workspace = true
 url.workspace = true
-zstd.workspace = true
 
 [dev-dependencies]
 tempfile = "=3.23.0"

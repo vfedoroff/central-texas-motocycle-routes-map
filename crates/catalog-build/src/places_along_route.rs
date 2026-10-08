@@ -1,7 +1,7 @@
 use catalog_model::{
     Catalog, CatalogObject, CatalogPayload, Coordinate, NearbyPlace, ObjectKind, StopDetail,
 };
-use catalog_roads::haversine_distance_m;
+
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 
@@ -152,4 +152,13 @@ pub fn route_places_with_config(
         stops: resolved_stops,
         nearby_places: nearby_candidates,
     }
+}
+
+fn haversine_distance_m(p1: Coordinate, p2: Coordinate) -> f64 {
+    let lat1 = p1[1].to_radians();
+    let lat2 = p2[1].to_radians();
+    let dlat = (p2[1] - p1[1]).to_radians();
+    let dlon = (p2[0] - p1[0]).to_radians();
+    let a = (dlat / 2.0).sin().powi(2) + lat1.cos() * lat2.cos() * (dlon / 2.0).sin().powi(2);
+    6_371_008.8 * 2.0 * a.sqrt().asin()
 }

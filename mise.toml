@@ -25,9 +25,6 @@ run = "cargo xtask test"
 [tasks.validate]
 run = "cargo xtask validate"
 
-[tasks."network:restore"]
-run = "cargo xtask network-restore"
-
 [tasks.build]
 run = "cargo xtask build"
 
@@ -40,7 +37,3 @@ run = "npm run test:browser"
 [tasks.check]
 description = "Current stage: formatting, clippy, and Rust tests via cargo-xtask"
 run = "cargo xtask check"
-
-[tasks."lint:routes"]
-description = "Run route-lint road and catalog linter"
-run = "cargo run --locked -p route-lint"

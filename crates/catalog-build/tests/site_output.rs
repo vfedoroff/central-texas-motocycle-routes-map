@@ -5,11 +5,7 @@ use catalog_model::{
     RouteType,
 };
 use sha2::{Digest, Sha256};
-use std::{
-    collections::BTreeMap,
-    fs,
-    path::{Path, PathBuf},
-};
+use std::{collections::BTreeMap, fs, path::Path};
 use tempfile::tempdir;
 
 fn setup_fixture_catalog(root: &Path) -> Result<()> {
@@ -117,10 +113,9 @@ fn test_full_generator_referential_integrity_and_determinism() -> Result<()> {
     let cfg1 = BuildConfig {
         root: root1.clone(),
         out: out1.clone(),
-        network: PathBuf::from("data/road-network/graph.json"),
-        config: PathBuf::from("config/road-audit.json"),
+
         environment: "development".to_string(),
-        allow_unverified_routes: true,
+
         ui_dir: None,
     };
 
@@ -196,10 +191,9 @@ fn test_full_generator_referential_integrity_and_determinism() -> Result<()> {
     let cfg2 = BuildConfig {
         root: root2.clone(),
         out: out2.clone(),
-        network: PathBuf::from("data/road-network/graph.json"),
-        config: PathBuf::from("config/road-audit.json"),
+
         environment: "development".to_string(),
-        allow_unverified_routes: true,
+
         ui_dir: None,
     };
 
