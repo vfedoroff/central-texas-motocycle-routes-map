@@ -78,7 +78,8 @@
     let destroyed = false;
 
     // Canvas renderer for performance with many route lines
-    const canvasRenderer = L.canvas({ padding: 0.5 });
+    // Keep thin route strokes legible while allowing imprecise mouse/touch selection.
+    const canvasRenderer = L.canvas({ padding: 0.5, tolerance: 12 });
 
     // Initial view coordinates: Central Texas default
     const defaultCenter = [30.45, -98.35];
