@@ -90,7 +90,7 @@ fn test_gpx_coordinates_match_geometry() -> Result<()> {
         network: PathBuf::from("data/road-network/graph.json"),
         config: PathBuf::from("config/road-audit.json"),
         environment: "development".to_string(),
-        allow_unverified_preview: true,
+        allow_unverified_routes: true,
         ui_dir: None,
     };
 
@@ -129,7 +129,7 @@ fn test_gpx_namespace_valid() -> Result<()> {
         network: PathBuf::from("data/road-network/graph.json"),
         config: PathBuf::from("config/road-audit.json"),
         environment: "development".to_string(),
-        allow_unverified_preview: true,
+        allow_unverified_routes: true,
         ui_dir: None,
     };
 
@@ -160,7 +160,7 @@ fn test_download_links_resolve() -> Result<()> {
         network: PathBuf::from("data/road-network/graph.json"),
         config: PathBuf::from("config/road-audit.json"),
         environment: "development".to_string(),
-        allow_unverified_preview: true,
+        allow_unverified_routes: true,
         ui_dir: None,
     };
 
@@ -201,7 +201,7 @@ fn test_no_old_bundles_generated() -> Result<()> {
         network: PathBuf::from("data/road-network/graph.json"),
         config: PathBuf::from("config/road-audit.json"),
         environment: "development".to_string(),
-        allow_unverified_preview: true,
+        allow_unverified_routes: true,
         ui_dir: None,
     };
 

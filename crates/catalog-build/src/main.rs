@@ -53,8 +53,9 @@ enum Command {
         config: PathBuf,
         #[arg(long, default_value = "development")]
         environment: String,
-        #[arg(long)]
-        allow_unverified_preview: bool,
+        /// Publish catalog without requiring optional road audit evidence
+        #[arg(long, alias = "allow-unverified-preview")]
+        allow_unverified_routes: bool,
         #[arg(long)]
         ui_dir: Option<PathBuf>,
         #[arg(long, default_value = "text")]
@@ -159,7 +160,7 @@ fn main() -> Result<()> {
             network,
             config,
             environment,
-            allow_unverified_preview,
+            allow_unverified_routes,
             ui_dir,
             format,
         } => {
@@ -169,7 +170,7 @@ fn main() -> Result<()> {
                 network,
                 config,
                 environment,
-                allow_unverified_preview,
+                allow_unverified_routes,
                 ui_dir,
             };
             catalog_build::build_site(&build_config)?;

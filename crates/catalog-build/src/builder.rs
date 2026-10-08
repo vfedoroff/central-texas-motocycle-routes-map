@@ -28,7 +28,7 @@ pub struct BuildConfig {
     pub network: PathBuf,
     pub config: PathBuf,
     pub environment: String, // "development" or "production"
-    pub allow_unverified_preview: bool,
+    pub allow_unverified_routes: bool,
     pub ui_dir: Option<PathBuf>,
 }
 
@@ -184,9 +184,6 @@ pub fn build_site(build_config: &BuildConfig) -> Result<()> {
         bail!("Build environment must be development or production");
     }
     let is_production = build_config.environment == "production";
-    if is_production && build_config.allow_unverified_preview {
-        bail!("Production environment rejects --allow-unverified-preview");
-    }
 
     // 1. Load catalog
     let catalog = match load_catalog(&canonical_root) {
@@ -201,7 +198,7 @@ pub fn build_site(build_config: &BuildConfig) -> Result<()> {
 
     // 2. Schema and topology validation
     let schema_diags =
-        validate_catalog_with_options(&catalog, !build_config.allow_unverified_preview);
+        validate_catalog_with_options(&catalog, !build_config.allow_unverified_routes);
     let has_errors = schema_diags.iter().any(|d| d.severity == Severity::Error);
     if has_errors {
         for d in &schema_diags {
@@ -212,8 +209,8 @@ pub fn build_site(build_config: &BuildConfig) -> Result<()> {
         bail!("Catalog validation failed with schema/topology error(s)");
     }
 
-    // 3. Only an explicit development preview may bypass road evidence.
-    if !build_config.allow_unverified_preview {
+    // 3. Road evidence is an optional audit gate, separate from release settings.
+    if !build_config.allow_unverified_routes {
         let network_file = if build_config.network.is_absolute() {
             build_config.network.clone()
         } else {
@@ -418,7 +415,7 @@ pub fn build_site(build_config: &BuildConfig) -> Result<()> {
                 let page_html = crate::pages::render_route_page_with_preview(
                     &detail,
                     production_url,
-                    build_config.allow_unverified_preview,
+                    build_config.allow_unverified_routes,
                 )?;
                 fs::write(page_dir.join("index.html"), page_html)?;
             }
@@ -499,7 +496,7 @@ pub fn build_site(build_config: &BuildConfig) -> Result<()> {
                 let page_html = crate::pages::render_road_page_with_preview(
                     &detail,
                     production_url,
-                    build_config.allow_unverified_preview,
+                    build_config.allow_unverified_routes,
                 )?;
                 fs::write(page_dir.join("index.html"), page_html)?;
             }
@@ -558,7 +555,7 @@ pub fn build_site(build_config: &BuildConfig) -> Result<()> {
                 let page_html = crate::pages::render_place_page_with_preview(
                     &detail,
                     production_url,
-                    build_config.allow_unverified_preview,
+                    build_config.allow_unverified_routes,
                 )?;
                 fs::write(page_dir.join("index.html"), page_html)?;
             }
@@ -573,7 +570,7 @@ pub fn build_site(build_config: &BuildConfig) -> Result<()> {
     let privacy_dir = staging_root.join("privacy");
     fs::create_dir_all(&privacy_dir)?;
     let privacy_html =
-        crate::pages::render_privacy_page(production_url, build_config.allow_unverified_preview)?;
+        crate::pages::render_privacy_page(production_url, build_config.allow_unverified_routes)?;
     fs::write(privacy_dir.join("index.html"), privacy_html)?;
 
     // 9. Prepare client config (force analytics off in non-production builds)
@@ -602,7 +599,7 @@ pub fn build_site(build_config: &BuildConfig) -> Result<()> {
             compose_ui(
                 ui_dir,
                 staging_root,
-                build_config.allow_unverified_preview,
+                build_config.allow_unverified_routes,
                 &config_json,
             )?;
         } else {

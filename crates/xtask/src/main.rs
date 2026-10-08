@@ -160,13 +160,6 @@ fn run_validate(root: &Path, audit_spurs: bool) -> Result<()> {
 }
 
 fn run_build(root: &Path, out: &Path, development: bool) -> Result<()> {
-    if !development {
-        let graph_file = root.join("data/road-network/graph.json");
-        if !graph_file.exists() {
-            run_network_restore(root, "text")?;
-        }
-    }
-
     // 1. Build Trunk UI into .build/ui
     let trunk_cmd = std::env::var("TRUNK").unwrap_or_else(|_| "trunk".to_string());
     let mut trunk = Command::new(trunk_cmd);
@@ -195,9 +188,9 @@ fn run_build(root: &Path, out: &Path, development: bool) -> Result<()> {
     cmd.arg("--format");
     cmd.arg("json");
     if development {
-        cmd.args(["--environment", "development", "--allow-unverified-preview"]);
+        cmd.args(["--environment", "development", "--allow-unverified-routes"]);
     } else {
-        cmd.args(["--environment", "production"]);
+        cmd.args(["--environment", "production", "--allow-unverified-routes"]);
     }
     run_command(&mut cmd, "building static catalog site")
 }

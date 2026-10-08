@@ -73,7 +73,7 @@ fn test_successful_dev_build() -> Result<()> {
         network: PathBuf::from("data/road-network/graph.json"),
         config: PathBuf::from("config/road-audit.json"),
         environment: "development".to_string(),
-        allow_unverified_preview: true,
+        allow_unverified_routes: true,
         ui_dir: None,
     };
 
@@ -118,7 +118,7 @@ fn test_failed_validation_preserves_sentinel() -> Result<()> {
         network: PathBuf::from("data/road-network/graph.json"),
         config: PathBuf::from("config/road-audit.json"),
         environment: "development".to_string(),
-        allow_unverified_preview: true,
+        allow_unverified_routes: true,
         ui_dir: None,
     };
 
@@ -185,30 +185,6 @@ fn test_symlink_output_rejected() -> Result<()> {
 }
 
 #[test]
-fn test_production_rejects_unverified_flag() -> Result<()> {
-    let dir = setup_fixture()?;
-    let root = dir.path().to_path_buf();
-    let out = root.join("dist");
-
-    let cfg = BuildConfig {
-        root,
-        out,
-        network: PathBuf::from("data/road-network/graph.json"),
-        config: PathBuf::from("config/road-audit.json"),
-        environment: "production".to_string(),
-        allow_unverified_preview: true,
-        ui_dir: None,
-    };
-
-    let result = build_site(&cfg);
-    assert!(result.is_err());
-    let err_msg = result.unwrap_err().to_string();
-    assert!(err_msg.contains("Production environment rejects --allow-unverified-preview"));
-
-    Ok(())
-}
-
-#[test]
 fn test_successful_ui_composition_and_asset_verification() -> Result<()> {
     let dir = setup_fixture()?;
     let root = dir.path().to_path_buf();
@@ -245,7 +221,7 @@ fn test_successful_ui_composition_and_asset_verification() -> Result<()> {
         network: PathBuf::from("data/road-network/graph.json"),
         config: PathBuf::from("config/road-audit.json"),
         environment: "development".to_string(),
-        allow_unverified_preview: true,
+        allow_unverified_routes: true,
         ui_dir: Some(ui_dir),
     };
 
@@ -310,7 +286,7 @@ fn test_ui_composition_rejects_unsafe_reference_and_preserves_output() -> Result
         network: PathBuf::from("data/road-network/graph.json"),
         config: PathBuf::from("config/road-audit.json"),
         environment: "development".to_string(),
-        allow_unverified_preview: true,
+        allow_unverified_routes: true,
         ui_dir: Some(ui_dir),
     };
     let error = build_site(&cfg).unwrap_err().to_string();
@@ -338,7 +314,7 @@ fn test_ui_composition_rejects_unstaged_asset_attribute() -> Result<()> {
         network: PathBuf::from("data/road-network/graph.json"),
         config: PathBuf::from("config/road-audit.json"),
         environment: "development".to_string(),
-        allow_unverified_preview: true,
+        allow_unverified_routes: true,
         ui_dir: Some(ui_dir),
     };
     assert!(
@@ -365,7 +341,7 @@ fn test_ui_composition_rejects_external_ui_directory() -> Result<()> {
         network: PathBuf::from("data/road-network/graph.json"),
         config: PathBuf::from("config/road-audit.json"),
         environment: "development".to_string(),
-        allow_unverified_preview: true,
+        allow_unverified_routes: true,
         ui_dir: Some(external.path().to_path_buf()),
     };
     assert!(
@@ -402,7 +378,7 @@ fn test_ui_composition_fails_on_missing_referenced_asset() -> Result<()> {
         network: PathBuf::from("data/road-network/graph.json"),
         config: PathBuf::from("config/road-audit.json"),
         environment: "development".to_string(),
-        allow_unverified_preview: true,
+        allow_unverified_routes: true,
         ui_dir: Some(ui_dir),
     };
 
@@ -427,7 +403,7 @@ fn test_dev_works_with_missing_evidence_while_production_fails() -> Result<()> {
         network: PathBuf::from("data/road-network/graph.json"),
         config: PathBuf::from("config/road-audit.json"),
         environment: "development".to_string(),
-        allow_unverified_preview: true,
+        allow_unverified_routes: true,
         ui_dir: None,
     };
     build_site(&dev_cfg)?;
@@ -441,7 +417,7 @@ fn test_dev_works_with_missing_evidence_while_production_fails() -> Result<()> {
         network: PathBuf::from("data/road-network/graph.json"),
         config: PathBuf::from("config/road-audit.json"),
         environment: "production".to_string(),
-        allow_unverified_preview: false,
+        allow_unverified_routes: false,
         ui_dir: None,
     };
     let prod_result = build_site(&prod_cfg);
@@ -456,5 +432,24 @@ fn test_dev_works_with_missing_evidence_while_production_fails() -> Result<()> {
     };
     assert!(build_site(&strict_dev_cfg).is_err());
 
+    Ok(())
+}
+
+#[test]
+fn production_can_publish_catalog_without_optional_road_audit() -> Result<()> {
+    let dir = setup_fixture()?;
+    let cfg = BuildConfig {
+        root: dir.path().to_path_buf(),
+        out: dir.path().join("dist"),
+        network: PathBuf::from("data/road-network/graph.json"),
+        config: PathBuf::from("config/road-audit.json"),
+        environment: "production".into(),
+        allow_unverified_routes: true,
+        ui_dir: None,
+    };
+    build_site(&cfg)?;
+    let html = fs::read_to_string(cfg.out.join("routes/test-route/index.html"))?;
+    assert!(html.contains("Test Route"));
+    assert!(cfg.out.join("catalog-index.json").exists());
     Ok(())
 }

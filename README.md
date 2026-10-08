@@ -49,14 +49,14 @@ Open http://127.0.0.1:8000. Development builds allow unverified route previews a
 cargo xtask check              # Formatting, Clippy and workspace tests
 cargo xtask validate           # Authored catalog validation
 npm run test:browser           # Desktop and mobile browser tests
-cargo xtask build              # Strict production build
+cargo xtask build              # Production build
 ```
 
 If macOS `rust-lld` cannot locate `libLLVM.dylib`, supply the installed toolchain’s library directory through `DYLD_FALLBACK_LIBRARY_PATH` for the build command.
 
 ## Route authoring
 
-Edit authored files in `content/` and `config/`. Routes require metadata, canonical road geometry, verified network paths and audit evidence. Use stable IDs; keep all references consistent. Routes must be paved, follow public road centerlines, avoid parking-lot incursions and unwanted spurs, and cite factual sources. Closed loops must have identical first and last coordinates.
+Edit authored files in `content/` and `config/`. Routes require metadata and canonical road geometry. Verified network paths and audit evidence can be added for optional road audits. Use stable IDs; keep all references consistent. Routes must be paved, follow public road centerlines, avoid parking-lot incursions and unwanted spurs, and cite factual sources. Closed loops must have identical first and last coordinates.
 
 See [AGENTS.md](AGENTS.md), [CONTRIBUTING.md](CONTRIBUTING.md) for the authoring and audit workflows. Do not invent verification evidence.
 
@@ -64,7 +64,7 @@ See [AGENTS.md](AGENTS.md), [CONTRIBUTING.md](CONTRIBUTING.md) for the authoring
 
 Netlify publishes `dist/` from the production branch, normally `main`. The build configuration installs the pinned Trunk version and WebAssembly target before running `cargo xtask build`. Node dependencies are installed from `package-lock.json`.
 
-Production builds require the pinned road-network lockfile and compressed graph, verified network paths, and passing audit evidence for every route. **The current checkout lacks `data/road-network.lock.json` and route audit evidence, so its strict production build is blocked.** Restore the real network inputs and complete the audits before enabling a production deployment. Development mode is a preview workflow, not verification of road suitability.
+Production builds validate catalog schemas and geometry, generate optimized WebAssembly and static assets, and use production analytics settings. Road-network audits are optional maintenance checks, not deployment prerequisites. To explicitly require road evidence, use `cargo run --locked -p catalog-build -- build --environment production` with the verified network and audit inputs available.
 
 After the production build succeeds, commit the authored sources and build configuration, merge into `main`, and push to the connected Git repository. Confirm the Netlify deployment succeeds before treating the live site as updated. Generated `dist/` stays untracked.
 

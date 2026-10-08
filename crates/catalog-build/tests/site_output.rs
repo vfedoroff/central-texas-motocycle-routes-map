@@ -120,7 +120,7 @@ fn test_full_generator_referential_integrity_and_determinism() -> Result<()> {
         network: PathBuf::from("data/road-network/graph.json"),
         config: PathBuf::from("config/road-audit.json"),
         environment: "development".to_string(),
-        allow_unverified_preview: true,
+        allow_unverified_routes: true,
         ui_dir: None,
     };
 
@@ -199,7 +199,7 @@ fn test_full_generator_referential_integrity_and_determinism() -> Result<()> {
         network: PathBuf::from("data/road-network/graph.json"),
         config: PathBuf::from("config/road-audit.json"),
         environment: "development".to_string(),
-        allow_unverified_preview: true,
+        allow_unverified_routes: true,
         ui_dir: None,
     };
 

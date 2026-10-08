@@ -90,7 +90,7 @@ mise run setup
 - `cargo xtask network-restore`: Decompresses and validates the pinned reference road network graph (`data/road-network/graph.json`).
 - `cargo xtask audit-roads --route <id>`: Runs the road network audit and writes verified evidence to `content/evidence/routes/<id>.json`.
 - `cargo xtask build --development`: Performs an atomic static site compilation in development mode (allows unverified previews, written to `dist/`).
-- `cargo xtask build`: Performs a production static site build (strictly enforces that all routes have verified passing road audit evidence).
+- `cargo xtask build`: Performs a production static site build. Road-network audits are optional and must not block publication.
 - `npm run preview`: Launches the local static preview server on `http://127.0.0.1:8000`.
 
 ---
