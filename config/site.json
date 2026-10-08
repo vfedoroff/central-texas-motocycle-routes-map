@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "title": "Ride Atlas",
+  "region_label": "Central Texas Routes",
+  "production_url": "https://central-texas-routes-map.netlify.app",
+  "language": "en",
+  "nearby_radius_m": 2000,
+  "nearby_limit": 20,
+  "results_page_size": 30,
+  "analytics": {
+    "enabled": true,
+    "measurement_id": "G-MGL3FX7522",
+    "production_host": "central-texas-routes-map.netlify.app"
+  },
+  "pwa": {
+    "enabled": true
+  }
+}

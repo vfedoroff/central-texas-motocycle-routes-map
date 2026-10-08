@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "id": "fitzhugh-hamilton-pool-craft-beverage-run",
+  "title": "Fitzhugh & Hamilton Pool Craft Beverage Run",
+  "summary": "Short rustic sprint winding past Hill Country creeks, local tasting rooms, and Hamilton Pool preserves near Dripping Springs.",
+  "body_markdown": "",
+  "tags": [],
+  "sources": [],
+  "photos": [],
+  "related": [],
+  "updated_on": null,
+  "author_note": null,
+  "category": "German Towns & Culture",
+  "color": "#8e44ad",
+  "distance_mi": 15.9,
+  "waypoints": [
+    "Bee Cave",
+    "Hamilton Pool",
+    "Fitzhugh Rd",
+    "Dripping Springs"
+  ],
+  "via": "Hamilton Pool Rd -> Fitzhugh Rd -> Dripping Springs",
+  "geometry_path": "content/geometry/routes/fitzhugh-hamilton-pool-craft-beverage-run.geojson",
+  "route_type": "corridor",
+  "navigation_junctions": [],
+  "stops": []
+}

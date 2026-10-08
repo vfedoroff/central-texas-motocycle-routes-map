@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "id": "lost-pines-bastrop-state-park-loop",
+  "title": "Lost Pines & Bastrop State Park Loop",
+  "summary": "Forested ride through the loblolly pine canopy of Park Road 1 connecting Bastrop and Buescher State Parks.",
+  "body_markdown": "",
+  "tags": [],
+  "sources": [],
+  "photos": [],
+  "related": [],
+  "updated_on": null,
+  "author_note": null,
+  "category": "Plains & Ranchlands",
+  "color": "#27ae60",
+  "distance_mi": 27.8,
+  "waypoints": [
+    "Bastrop",
+    "Lost Pines",
+    "Buescher State Park"
+  ],
+  "via": "FM 1441 -> Park Road 1 -> Smithville -> Bastrop",
+  "geometry_path": "content/geometry/routes/lost-pines-bastrop-state-park-loop.geojson",
+  "route_type": "loop",
+  "navigation_junctions": [],
+  "stops": []
+}

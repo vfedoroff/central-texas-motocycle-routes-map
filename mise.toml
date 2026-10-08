@@ -1,0 +1,46 @@
+[tools]
+rust = "1.99.0"
+node = "24.21.0"
+"cargo:trunk" = "0.21.14"
+
+[tasks.setup]
+description = "Install components for the pinned Rust toolchain"
+run = [
+  "rustup target add --toolchain 1.99.0 wasm32-unknown-unknown",
+  "rustup component add --toolchain 1.99.0 rustfmt clippy",
+]
+
+[tasks."fmt:check"]
+run = "cargo xtask fmt"
+
+[tasks."fmt:fix"]
+run = "cargo xtask fmt --fix"
+
+[tasks.clippy]
+run = "cargo xtask clippy"
+
+[tasks."test:rust"]
+run = "cargo xtask test"
+
+[tasks.validate]
+run = "cargo xtask validate"
+
+[tasks."network:restore"]
+run = "cargo xtask network-restore"
+
+[tasks.build]
+run = "cargo xtask build"
+
+[tasks.dev]
+run = "cargo xtask build --development && npm run preview"
+
+[tasks."test:browser"]
+run = "npm run test:browser"
+
+[tasks.check]
+description = "Current stage: formatting, clippy, and Rust tests via cargo-xtask"
+run = "cargo xtask check"
+
+[tasks."lint:routes"]
+description = "Run route-lint road and catalog linter"
+run = "cargo run --locked -p route-lint"

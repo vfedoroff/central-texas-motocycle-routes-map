@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "id": "saturday-dawn-lake-travis-loop",
+  "title": "Saturday Dawn Lake Travis Loop",
+  "summary": "Brisk morning loop around the southern rim of Lake Travis and Cypress Mill, taking in ridge vistas and lake crossings.",
+  "body_markdown": "",
+  "tags": [],
+  "sources": [],
+  "photos": [],
+  "related": [],
+  "updated_on": null,
+  "author_note": null,
+  "category": "Lakes & Rivers",
+  "color": "#2980b9",
+  "distance_mi": 99,
+  "waypoints": [
+    "Cedar Park (QT)",
+    "Lago Vista",
+    "Marble Falls",
+    "Round Mountain",
+    "Cypress Mill",
+    "Hamilton Pool",
+    "Bee Cave",
+    "Mansfield Dam"
+  ],
+  "via": "RM 1431 West -> US 281 South -> East RM 962 -> Hamilton Pool Rd -> TX 71 East -> RM 620 North -> Anderson Mill Rd",
+  "geometry_path": "content/geometry/routes/saturday-dawn-lake-travis-loop.geojson",
+  "route_type": "loop",
+  "navigation_junctions": [],
+  "stops": []
+}

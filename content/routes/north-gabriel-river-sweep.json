@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "id": "north-gabriel-river-sweep",
+  "title": "North Gabriel River Sweep",
+  "summary": "Pleasant country lane loop winding across the North Gabriel River low-water country near Liberty Hill.",
+  "body_markdown": "",
+  "tags": [],
+  "sources": [],
+  "photos": [],
+  "related": [],
+  "updated_on": null,
+  "author_note": null,
+  "category": "Plains & Ranchlands",
+  "color": "#27ae60",
+  "distance_mi": 22.1,
+  "waypoints": [
+    "TX 29 @ CR 200",
+    "North Gabriel River",
+    "Liberty Hill",
+    "US 183"
+  ],
+  "via": "TX 29 @ CR 200 -> CR 200 -> CR 201 -> CR 214 -> RM 243 -> CR 210 -> US 183",
+  "geometry_path": "content/geometry/routes/north-gabriel-river-sweep.geojson",
+  "route_type": "corridor",
+  "navigation_junctions": [],
+  "stops": []
+}

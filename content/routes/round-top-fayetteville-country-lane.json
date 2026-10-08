@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "id": "round-top-fayetteville-country-lane",
+  "title": "Round Top & Fayetteville Country Lane",
+  "summary": "Laid-back prairie ride exploring the historic town squares, antique corridors, and back roads between Round Top and Fayetteville.",
+  "body_markdown": "",
+  "tags": [],
+  "sources": [],
+  "photos": [],
+  "related": [],
+  "updated_on": null,
+  "author_note": null,
+  "category": "Plains & Ranchlands",
+  "color": "#27ae60",
+  "distance_mi": 28.3,
+  "waypoints": [
+    "Fayetteville",
+    "Round Top",
+    "Shelby"
+  ],
+  "via": "FM 1291 -> Round Top -> FM 2503 -> Shelby",
+  "geometry_path": "content/geometry/routes/round-top-fayetteville-country-lane.geojson",
+  "route_type": "loop",
+  "navigation_junctions": [],
+  "stops": []
+}

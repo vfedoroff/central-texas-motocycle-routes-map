@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "id": "lake-victor-burnet-backcountry-sweep",
+  "title": "Lake Victor & Burnet Backcountry Sweep",
+  "summary": "Peaceful back-country loop through the rolling oak savannah and farmland north of Burnet.",
+  "body_markdown": "",
+  "tags": [],
+  "sources": [],
+  "photos": [],
+  "related": [],
+  "updated_on": null,
+  "author_note": null,
+  "category": "Plains & Ranchlands",
+  "color": "#27ae60",
+  "distance_mi": 25,
+  "waypoints": [
+    "Burnet",
+    "RM 2340",
+    "Lake Victor"
+  ],
+  "via": "RM 2340 -> Lake Victor -> Watson -> Burnet",
+  "geometry_path": "content/geometry/routes/lake-victor-burnet-backcountry-sweep.geojson",
+  "route_type": "loop",
+  "navigation_junctions": [],
+  "stops": []
+}

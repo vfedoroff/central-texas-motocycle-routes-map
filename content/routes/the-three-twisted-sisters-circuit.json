@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "id": "the-three-twisted-sisters-circuit",
+  "title": "The Three Twisted Sisters Circuit",
+  "summary": "Texas's premier motorcycling destination featuring steep canyon climbs, hairpins, and cliffside drops on RRs 335, 336, and 337.",
+  "body_markdown": "",
+  "tags": [],
+  "sources": [],
+  "photos": [],
+  "related": [],
+  "updated_on": null,
+  "author_note": null,
+  "category": "Twisties & Canyons",
+  "color": "#e74c3c",
+  "distance_mi": 174,
+  "waypoints": [
+    "Leakey",
+    "Camp Wood",
+    "Vanderpool",
+    "Medina"
+  ],
+  "via": "FM 337 -> FM 335 -> FM 336 -> FM 337 (100-mi canyon loop)",
+  "geometry_path": "content/geometry/routes/the-three-twisted-sisters-circuit.geojson",
+  "route_type": "corridor",
+  "navigation_junctions": [],
+  "stops": []
+}

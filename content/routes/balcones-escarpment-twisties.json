@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "id": "balcones-escarpment-twisties",
+  "title": "Balcones Escarpment Twisties",
+  "summary": "Technical canyon run descending through the Balcones Canyonlands along the steep elevation drops and sharp bends of Cow Creek.",
+  "body_markdown": "",
+  "tags": [],
+  "sources": [],
+  "photos": [],
+  "related": [],
+  "updated_on": null,
+  "author_note": null,
+  "category": "Twisties & Canyons",
+  "color": "#e74c3c",
+  "distance_mi": 29.1,
+  "waypoints": [
+    "Marble Falls",
+    "Cow Creek",
+    "Liberty Hill"
+  ],
+  "via": "FM 1431 -> Cow Creek Rd (FM 1174) -> RM 1869",
+  "geometry_path": "content/geometry/routes/balcones-escarpment-twisties.geojson",
+  "route_type": "corridor",
+  "navigation_junctions": [],
+  "stops": []
+}

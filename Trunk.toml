@@ -1,0 +1,5 @@
+[build]
+target = "crates/catalog-ui/index.html"
+dist = ".build/ui"
+public_url = "/app/"
+filehash = true

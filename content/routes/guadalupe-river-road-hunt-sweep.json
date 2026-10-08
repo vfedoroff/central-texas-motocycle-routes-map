@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "id": "guadalupe-river-road-hunt-sweep",
+  "title": "Guadalupe River Road & Hunt Sweep",
+  "summary": "Riverside ride following the cypress-lined North Fork of the Guadalupe River through Kerrville, Ingram, and Hunt.",
+  "body_markdown": "",
+  "tags": [],
+  "sources": [],
+  "photos": [],
+  "related": [],
+  "updated_on": null,
+  "author_note": null,
+  "category": "Lakes & Rivers",
+  "color": "#2980b9",
+  "distance_mi": 54.6,
+  "waypoints": [
+    "Kerrville",
+    "Ingram",
+    "Hunt",
+    "Guadalupe River"
+  ],
+  "via": "TX 39 -> FM 1340 (North Fork Guadalupe River)",
+  "geometry_path": "content/geometry/routes/guadalupe-river-road-hunt-sweep.geojson",
+  "route_type": "loop",
+  "navigation_junctions": [],
+  "stops": []
+}

@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "id": "highland-lakes-circuit",
+  "title": "Highland Lakes Circuit",
+  "summary": "Lake-hopping circuit around Lake Buchanan and Inks Lake, navigating scenic park roads and rugged granite outcroppings.",
+  "body_markdown": "",
+  "tags": [],
+  "sources": [],
+  "photos": [],
+  "related": [],
+  "updated_on": null,
+  "author_note": null,
+  "category": "Lakes & Rivers",
+  "color": "#2980b9",
+  "distance_mi": 43.2,
+  "waypoints": [
+    "Burnet",
+    "Lake Buchanan",
+    "Inks Lake",
+    "Marble Falls"
+  ],
+  "via": "TX 29 -> RM 2341 -> RM 690 -> Park Road 4 -> Longhorn Cavern",
+  "geometry_path": "content/geometry/routes/highland-lakes-circuit.geojson",
+  "route_type": "corridor",
+  "navigation_junctions": [],
+  "stops": []
+}

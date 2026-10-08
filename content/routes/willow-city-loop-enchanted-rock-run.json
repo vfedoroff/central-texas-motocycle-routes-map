@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "id": "willow-city-loop-enchanted-rock-run",
+  "title": "Willow City Loop & Enchanted Rock Run",
+  "summary": "Famous scenic canyon pass cutting through rugged ranch rangeland, steep granite ridges, and near Enchanted Rock.",
+  "body_markdown": "",
+  "tags": [],
+  "sources": [],
+  "photos": [],
+  "related": [],
+  "updated_on": null,
+  "author_note": null,
+  "category": "Twisties & Canyons",
+  "color": "#e74c3c",
+  "distance_mi": 35.7,
+  "waypoints": [
+    "Fredericksburg",
+    "Willow City",
+    "Enchanted Rock"
+  ],
+  "via": "TX 16 -> RM 1323 -> Willow City Loop -> FM 965",
+  "geometry_path": "content/geometry/routes/willow-city-loop-enchanted-rock-run.geojson",
+  "route_type": "loop",
+  "navigation_junctions": [],
+  "stops": []
+}

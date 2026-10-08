@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "id": "german-heritage-trail",
+  "title": "German Heritage Trail",
+  "summary": "Historic Hill Country route connecting Fredericksburg, Sisterdale, and Blanco through Old San Antonio Road and historic ranch valleys.",
+  "body_markdown": "",
+  "tags": [],
+  "sources": [],
+  "photos": [],
+  "related": [],
+  "updated_on": null,
+  "author_note": null,
+  "category": "German Towns & Culture",
+  "color": "#8e44ad",
+  "distance_mi": 61.2,
+  "waypoints": [
+    "Fredericksburg",
+    "Old San Antonio Rd",
+    "Sisterdale",
+    "Blanco"
+  ],
+  "via": "Old San Antonio Rd -> FM 473 -> Blanco",
+  "geometry_path": "content/geometry/routes/german-heritage-trail.geojson",
+  "route_type": "corridor",
+  "navigation_junctions": [],
+  "stops": []
+}

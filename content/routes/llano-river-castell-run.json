@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "id": "llano-river-castell-run",
+  "title": "Llano River & Castell Run",
+  "summary": "Remote river run along FM 152 following the granite boulder-strewn Llano River to the historic hamlet of Castell.",
+  "body_markdown": "",
+  "tags": [],
+  "sources": [],
+  "photos": [],
+  "related": [],
+  "updated_on": null,
+  "author_note": null,
+  "category": "Lakes & Rivers",
+  "color": "#2980b9",
+  "distance_mi": 43.2,
+  "waypoints": [
+    "Llano",
+    "Castell",
+    "Mason"
+  ],
+  "via": "FM 152 -> Castell -> FM 2323",
+  "geometry_path": "content/geometry/routes/llano-river-castell-run.geojson",
+  "route_type": "corridor",
+  "navigation_junctions": [],
+  "stops": []
+}

@@ -4,3 +4,16 @@ __pycache__/
 .DS_Store
 .vscode/
 .idea/
+target/
+.tools/
+.mise/
+.cache/
+.build/
+dist/
+node_modules/
+test-results/
+
+# Local documentation, QA evidence and implementation plans
+/docs/
+/qa/
+/plans/

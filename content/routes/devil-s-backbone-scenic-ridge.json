@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "id": "devil-s-backbone-scenic-ridge",
+  "title": "Devil's Backbone Scenic Ridge",
+  "summary": "Iconic ridgeline ride along RM 32 high above the Wimberley Valley, offering dramatic limestone bluff panoramas.",
+  "body_markdown": "",
+  "tags": [],
+  "sources": [],
+  "photos": [],
+  "related": [],
+  "updated_on": null,
+  "author_note": null,
+  "category": "Twisties & Canyons",
+  "color": "#e74c3c",
+  "distance_mi": 34.3,
+  "waypoints": [
+    "Wimberley",
+    "Fischer",
+    "Blanco"
+  ],
+  "via": "RM 12 -> RM 32 -> US 281",
+  "geometry_path": "content/geometry/routes/devil-s-backbone-scenic-ridge.geojson",
+  "route_type": "corridor",
+  "navigation_junctions": [],
+  "stops": []
+}

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }} - Ride Atlas</title>
+  <meta name="description" content="{{ description }}">
+  <link rel="canonical" href="{{ canonical_url }}">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 1rem; color: #222; }
+    header { margin-bottom: 2rem; }
+    h1 { margin-bottom: 0.5rem; }
+    .badge { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 4px; color: #fff; font-size: 0.85rem; font-weight: bold; }
+    .meta { color: #555; margin-bottom: 1.5rem; }
+    .nav-links, .download-links { margin: 1rem 0; }
+    .nav-links a, .download-links a { display: inline-block; margin-right: 0.5rem; padding: 0.4rem 0.8rem; background: #eee; border-radius: 4px; text-decoration: none; color: #333; font-weight: 500; }
+    .nav-links a:hover, .download-links a:hover { background: #ddd; }
+    .nav-start-block { margin-top: 0.5rem; }
+    .nav-start-place { font-size: 0.9rem; font-weight: 500; color: #444; margin-left: 0.5rem; }
+    .nav-start-note { font-size: 0.85rem; color: #666; margin-left: 0.5rem; }
+    .nav-start-explainer { font-size: 0.85rem; color: #666; margin: 0.25rem 0 0 0; }
+    .export-route-disclosure { margin: 1rem 0; border: 1px solid #ddd; border-radius: 6px; padding: 0.5rem 0.75rem; background: #fafafa; }
+    .export-route-summary { font-weight: 600; cursor: pointer; user-select: none; }
+    section { margin-top: 2rem; border-top: 1px solid #eee; padding-top: 1.5rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <p><a href="/">&larr; Back to Map</a></p>
+    <h1>{{ detail.title }}</h1>
+    {% if let Some(cat) = &detail.category %}
+      {% match cat.as_str() %}
+        {% when "Twisties & Canyons" %}
+          <span class="badge" style="background-color: #b91c1c;">{{ cat }}</span>
+        {% when "Lakes & Rivers" %}
+          <span class="badge" style="background-color: #1d4ed8;">{{ cat }}</span>
+        {% when "German Towns & Culture" %}
+          <span class="badge" style="background-color: #7e22ce;">{{ cat }}</span>
+        {% when "Plains & Ranchlands" %}
+          <span class="badge" style="background-color: #15803d;">{{ cat }}</span>
+        {% else %}
+          {% if let Some(col) = &detail.color %}
+            <span class="badge" style="background-color: {{ col }};">{{ cat }}</span>
+          {% endif %}
+      {% endmatch %}
+    {% endif %}
+    <p class="summary">{{ detail.summary }}</p>
+    <div class="meta">
+      {% if let Some(dist) = detail.distance_mi %}
+        <p><strong>Distance:</strong> {{ dist }} miles</p>
+      {% endif %}
+      {% if let Some(rtype) = &detail.route_type %}
+        {% match rtype %}
+          {% when RouteType::Loop %}
+            <p><strong>Route type:</strong> Loop</p>
+          {% when RouteType::Corridor %}
+            <p><strong>Route type:</strong> Corridor</p>
+        {% endmatch %}
+      {% endif %}
+      {% if let Some(start) = &detail.start_label %}
+        <p><strong>Starts at:</strong> {{ start }}</p>
+      {% endif %}
+      {% if let Some(via) = &detail.via %}
+        <p><strong>Via:</strong> {{ via }}</p>
+      {% endif %}
+      {% if let Some(wps) = &detail.waypoints %}
+        <p><strong>Waypoints:</strong> {{ wps.join(" -> ") }}</p>
+      {% endif %}
+    </div>
+
+    {% if !detail.navigation_links.is_empty() %}
+      <div class="nav-links">
+        <strong>Navigation:</strong>
+        {% for link in &detail.navigation_links %}
+          {% match link.mode %}
+            {% when NavigationMode::Start %}
+              <div class="nav-start-block">
+                <a href="{{ link.url }}" target="_blank" rel="noopener">Directions to start</a>
+                {% if let Some(start) = &detail.start_label %}
+                  <span class="nav-start-place">Starts at: {{ start }}</span>
+                {% else %}
+                  <span class="nav-start-note">Opens directions to the route's starting coordinate.</span>
+                {% endif %}
+                <p class="nav-start-explainer">This gets you to the start; it does not follow the full ride.</p>
+              </div>
+            {% else %}
+              <a href="{{ link.url }}" target="_blank" rel="noopener">{{ link.label }}</a>
+          {% endmatch %}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <details class="export-route-disclosure">
+      <summary class="export-route-summary">Export route</summary>
+      <div class="download-links">
+        {% if let Some(gpx) = &detail.gpx_url %}
+          <a href="{{ gpx }}" download>Download GPX</a>
+        {% endif %}
+        {% if let Some(geom) = &detail.geometry_url %}
+          <a href="{{ geom }}" download>Download GeoJSON</a>
+        {% endif %}
+      </div>
+    </details>
+  </header>
+
+  {% if let Some(note) = &detail.author_note %}
+    <section class="ride-notes">
+      <h2>Ride notes</h2>
+      <p><strong>Visit status:</strong> {{ note.visit_status }}</p>
+      {% if let Some(rec) = &note.recommendation %}
+        <p><strong>Recommendation:</strong> {{ rec }}</p>
+      {% endif %}
+      {% if let Some(vdate) = &note.visited_on %}
+        <p><strong>Visited on:</strong> {{ vdate }}</p>
+      {% endif %}
+      <div>{{ note_html|safe }}</div>
+    </section>
+  {% endif %}
+
+  {% if !detail.stops.is_empty() %}
+    <section class="route-stops">
+      <h2>Route stops</h2>
+      <ul>
+        {% for stop in &detail.stops %}
+          <li>
+            <a href="{{ stop.page_url }}">{{ stop.title }}</a>
+            {% if let Some(snote) = &stop.note %}
+              - <span>{{ snote }}</span>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
+
+  {% if !detail.nearby_places.is_empty() %}
+    <section class="nearby-places">
+      <h2>Near this route</h2>
+      <p><em>Proximity only: destinations near this corridor</em></p>
+      <ul>
+        {% for near in &detail.nearby_places %}
+          <li>
+            <a href="{{ near.page_url }}">{{ near.title }}</a> (proximity)
+          </li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
+
+  {% if !detail.body_html.is_empty() %}
+    <section class="description">
+      <h2>Description</h2>
+      <div>{{ detail.body_html|safe }}</div>
+    </section>
+  {% endif %}
+
+  {% if !detail.related.is_empty() %}
+    <section class="related">
+      <h2>Related</h2>
+      <ul>
+        {% for rel in &detail.related %}
+          <li><a href="{{ rel.page_url }}">{{ rel.title }}</a></li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
+
+  {% if !detail.sources.is_empty() %}
+    <section class="sources">
+      <h2>Sources</h2>
+      <ul>
+        {% for src in &detail.sources %}
+          <li><a href="{{ src.url }}" target="_blank" rel="noopener">{{ src.title }}</a> (accessed {{ src.accessed_on }})</li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
+</body>
+</html>

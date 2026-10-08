@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "bertram-rm-1174-rm-963-loop",
+  "title": "Bertram, RM 1174 & RM 963 Loop",
+  "summary": "Quiet ranch country loop through northern Burnet County featuring gentle rolling curves and open pastures between Bertram and Oakalla.",
+  "body_markdown": "",
+  "tags": [],
+  "sources": [],
+  "photos": [],
+  "related": [],
+  "updated_on": null,
+  "author_note": null,
+  "category": "Plains & Ranchlands",
+  "color": "#27ae60",
+  "distance_mi": 54.7,
+  "waypoints": [
+    "183 / TX 29 Crossing",
+    "Bertram",
+    "RM 1174",
+    "RM 963",
+    "US 183"
+  ],
+  "via": "TX 29 West -> Bertram -> RM 1174 North -> RM 963 East -> US 183 South",
+  "geometry_path": "content/geometry/routes/bertram-rm-1174-rm-963-loop.geojson",
+  "route_type": "loop",
+  "navigation_junctions": [],
+  "stops": []
+}

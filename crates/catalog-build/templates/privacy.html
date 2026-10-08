@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{{ title }} — Ride Atlas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="{{ description }}">
+    <link rel="canonical" href="{{ canonical_url }}">
+    <style>
+        :root {
+            --color-surface: #ffffff;
+            --color-bg: #f8fafc;
+            --color-text-primary: #0f172a;
+            --color-text-muted: #475569;
+            --color-border: #e2e8f0;
+            --color-primary: #2563eb;
+            --font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        body {
+            font-family: var(--font-family);
+            background-color: var(--color-bg);
+            color: var(--color-text-primary);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        .privacy-container {
+            max-width: 780px;
+            margin: 40px auto;
+            padding: 0 24px;
+        }
+        .privacy-nav-back {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: var(--color-primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .privacy-nav-back:hover {
+            text-decoration: underline;
+        }
+        .privacy-header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            color: var(--color-text-primary);
+        }
+        .privacy-lead {
+            font-size: 1.15rem;
+            color: var(--color-text-muted);
+            margin-bottom: 32px;
+        }
+        .privacy-section {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .privacy-section h2 {
+            font-size: 1.35rem;
+            color: var(--color-text-primary);
+            margin-top: 0;
+            margin-bottom: 12px;
+            border-bottom: 1px solid var(--color-border);
+            padding-bottom: 8px;
+        }
+        .privacy-section ul, .privacy-section ol {
+            padding-left: 24px;
+            margin: 12px 0;
+        }
+        .privacy-section li {
+            margin-bottom: 8px;
+        }
+        .privacy-card {
+            background: #f1f5f9;
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        .privacy-card h3 {
+            margin-top: 0;
+            font-size: 1.05rem;
+        }
+        .consent-status-display {
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background: #e2e8f0;
+        }
+        .privacy-actions {
+            margin-top: 14px;
+            display: flex;
+            gap: 12px;
+        }
+        .btn-privacy-opt {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.15s ease;
+        }
+        .btn-privacy-allow {
+            background: #2563eb;
+            color: #ffffff;
+        }
+        .btn-privacy-allow:hover {
+            background: #1d4ed8;
+        }
+        .btn-privacy-decline {
+            background: #e2e8f0;
+            color: #334155;
+        }
+        .btn-privacy-decline:hover {
+            background: #cbd5e1;
+        }
+    </style>
+</head>
+<body>
+    <main class="privacy-container">
+        <a href="/" class="privacy-nav-back">← Back to Map & Catalog</a>
+        <header class="privacy-header">
+            <h1>Privacy Policy</h1>
+            <p class="privacy-lead">Ride Atlas is built with strict privacy standards. We believe in providing open, high-quality motorcycle routes without personal surveillance.</p>
+        </header>
+
+        <section class="privacy-section">
+            <h2>Location & Navigation</h2>
+            <p>Your location privacy on the road is strictly protected:</p>
+            <ul>
+                <li><strong>Browser-Local Geolocation:</strong> If you allow location access to center the map, your coordinates are processed purely within your browser session. Your coordinates are never transmitted to our servers or any third parties.</li>
+                <li><strong>Turn-by-Turn Navigation:</strong> External navigation links open Google Maps in a new tab. We do not transmit your ride history or navigation telemetry.</li>
+            </ul>
+        </section>
+
+        <section class="privacy-section">
+            <h2>Optional Analytics</h2>
+            <p>Ride Atlas optionally uses Google Analytics 4 (GA4) solely to measure aggregate catalog usage and prioritize route curation. Analytics is strictly guarded by four sequential gates:</p>
+            <ol>
+                <li>Only active in official production builds.</li>
+                <li>Only active on our production domain (<code>{{ production_url }}</code>).</li>
+                <li>Only active when enabled by configuration with a valid property ID.</li>
+                <li><strong>Only active when you explicitly grant consent.</strong></li>
+            </ol>
+            <p>If any single condition is not met, no Google tracking scripts are fetched and zero network requests are made to Google.</p>
+        </section>
+
+        <section class="privacy-section">
+            <h2>What Is Tracked (With Consent)</h2>
+            <p>When consent is granted, only five explicit catalog interaction events are recorded:</p>
+            <ul>
+                <li><code>catalog_object_open</code>: View of a route, road, or destination (kind and ID only).</li>
+                <li><code>catalog_filter_apply</code>: Route category filter selection.</li>
+                <li><code>catalog_search_empty</code>: Recorded when a search query returns 0 results (count only; your search terms are <strong>never</strong> recorded).</li>
+                <li><code>catalog_maps_click</code>: Clicks on external navigation links (object ID only; destination URLs are never recorded).</li>
+                <li><code>catalog_gpx_download</code>: Clicks to download route GPX files.</li>
+            </ul>
+            <p><strong>What is never collected:</strong> Names, email addresses, user passwords, search queries, IP addresses (anonymized/dropped), or GPS location coordinates.</p>
+        </section>
+
+        <section class="privacy-section">
+            <h2>Manage Your Consent</h2>
+            <div class="privacy-card">
+                <h3>Your Current Analytics Preference</h3>
+                <p>Status: <span id="consent-status-badge" class="consent-status-display">Checking...</span></p>
+                <div class="privacy-actions">
+                    <button type="button" id="btn-allow-consent" class="btn-privacy-opt btn-privacy-allow">Allow Analytics</button>
+                    <button type="button" id="btn-decline-consent" class="btn-privacy-opt btn-privacy-decline">Decline Analytics</button>
+                </div>
+                <p id="consent-status-feedback" style="margin-top: 12px; font-size: 13px; color: #64748b;"></p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        (function() {
+            var badge = document.getElementById('consent-status-badge');
+            var feedback = document.getElementById('consent-status-feedback');
+            var btnAllow = document.getElementById('btn-allow-consent');
+            var btnDecline = document.getElementById('btn-decline-consent');
+            var key = 'catalog_analytics_consent';
+
+            function updateUI() {
+                var current = localStorage.getItem(key);
+                if (current === 'allowed') {
+                    badge.textContent = 'Allowed';
+                    badge.style.background = '#dcfce7';
+                    badge.style.color = '#15803d';
+                } else if (current === 'declined') {
+                    badge.textContent = 'Declined';
+                    badge.style.background = '#fee2e2';
+                    badge.style.color = '#b91c1c';
+                } else {
+                    badge.textContent = 'Not configured (unset)';
+                    badge.style.background = '#f1f5f9';
+                    badge.style.color = '#64748b';
+                }
+            }
+
+            btnAllow.addEventListener('click', function() {
+                localStorage.setItem(key, 'allowed');
+                updateUI();
+                feedback.textContent = 'Preference saved: Analytics allowed.';
+            });
+
+            btnDecline.addEventListener('click', function() {
+                localStorage.setItem(key, 'declined');
+                updateUI();
+                feedback.textContent = 'Preference saved: Analytics declined. No further events will be tracked.';
+            });
+
+            updateUI();
+        })();
+    </script>
+</body>
+</html>

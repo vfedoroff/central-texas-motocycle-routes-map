@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "id": "sisterdale-kendalia-luckenbach-run",
+  "title": "Sisterdale, Kendalia & Luckenbach Run",
+  "summary": "Quaint Kendall and Gillespie County ramble between historic German settlement posts and dance halls.",
+  "body_markdown": "",
+  "tags": [],
+  "sources": [],
+  "photos": [],
+  "related": [],
+  "updated_on": null,
+  "author_note": null,
+  "category": "German Towns & Culture",
+  "color": "#8e44ad",
+  "distance_mi": 54,
+  "waypoints": [
+    "Boerne",
+    "Sisterdale",
+    "Kendalia",
+    "Luckenbach"
+  ],
+  "via": "FM 1376 -> FM 473 -> Kendalia -> Luckenbach",
+  "geometry_path": "content/geometry/routes/sisterdale-kendalia-luckenbach-run.geojson",
+  "route_type": "corridor",
+  "navigation_junctions": [],
+  "stops": []
+}

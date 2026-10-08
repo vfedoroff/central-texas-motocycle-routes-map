@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "max_deviation_m": 15.0,
+  "comparison_step_m": 5.0,
+  "closure_tolerance_m": 0.0,
+  "arc_band_m": 500.0,
+  "require_paved": true
+}

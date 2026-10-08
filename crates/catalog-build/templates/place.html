@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }} - Ride Atlas</title>
+  <meta name="description" content="{{ description }}">
+  <link rel="canonical" href="{{ canonical_url }}">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 1rem; color: #222; }
+    header { margin-bottom: 2rem; }
+    h1 { margin-bottom: 0.5rem; }
+    .summary { font-size: 1.1rem; color: #444; }
+    .nav-links a { display: inline-block; margin-right: 1rem; padding: 0.4rem 0.8rem; background: #eee; border-radius: 4px; text-decoration: none; color: #333; }
+    section { margin-top: 2rem; border-top: 1px solid #eee; padding-top: 1.5rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <p><a href="/">&larr; Back to Map</a></p>
+    <h1>{{ detail.title }}</h1>
+    <p class="summary">{{ detail.summary }}</p>
+
+    {% if let Some(cat) = &detail.place_category %}
+      <p><strong>Category:</strong> {{ cat }}</p>
+    {% endif %}
+    {% if let Some(addr) = &detail.address %}
+      <p><strong>Address:</strong> {{ addr }}</p>
+    {% endif %}
+
+    {% if !detail.navigation_links.is_empty() %}
+      <div class="nav-links">
+        <strong>Navigation:</strong>
+        {% for link in &detail.navigation_links %}
+          <a href="{{ link.url }}" target="_blank" rel="noopener">{{ link.label }}</a>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </header>
+
+  {% if let Some(note) = &detail.author_note %}
+    <section class="ride-notes">
+      <h2>Ride notes</h2>
+      <p><strong>Visit status:</strong> {{ note.visit_status }}</p>
+      {% if let Some(rec) = &note.recommendation %}
+        <p><strong>Recommendation:</strong> {{ rec }}</p>
+      {% endif %}
+      {% if let Some(vdate) = &note.visited_on %}
+        <p><strong>Visited on:</strong> {{ vdate }}</p>
+      {% endif %}
+      <div>{{ note_html|safe }}</div>
+    </section>
+  {% endif %}
+
+  {% if !detail.body_html.is_empty() %}
+    <section class="description">
+      <h2>Description</h2>
+      <div>{{ detail.body_html|safe }}</div>
+    </section>
+  {% endif %}
+
+  {% if !detail.related.is_empty() %}
+    <section class="related">
+      <h2>Related</h2>
+      <ul>
+        {% for rel in &detail.related %}
+          <li><a href="{{ rel.page_url }}">{{ rel.title }}</a></li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
+
+  {% if !detail.sources.is_empty() %}
+    <section class="sources">
+      <h2>Sources</h2>
+      <ul>
+        {% for src in &detail.sources %}
+          <li><a href="{{ src.url }}" target="_blank" rel="noopener">{{ src.title }}</a> (accessed {{ src.accessed_on }})</li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
+</body>
+</html>

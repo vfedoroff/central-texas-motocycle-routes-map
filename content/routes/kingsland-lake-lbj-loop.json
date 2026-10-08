@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "id": "kingsland-lake-lbj-loop",
+  "title": "Kingsland & Lake LBJ Loop",
+  "summary": "Waterfront loop circling Lake LBJ and Packsaddle Mountain with sweeping lake views and gentle shoreline curves.",
+  "body_markdown": "",
+  "tags": [],
+  "sources": [],
+  "photos": [],
+  "related": [],
+  "updated_on": null,
+  "author_note": null,
+  "category": "Lakes & Rivers",
+  "color": "#2980b9",
+  "distance_mi": 47.5,
+  "waypoints": [
+    "Marble Falls",
+    "Kingsland",
+    "Packsaddle Mtn"
+  ],
+  "via": "US 281 -> Park Road 4 -> RM 2900 -> RM 2233 -> US 71 -> RM 2147",
+  "geometry_path": "content/geometry/routes/kingsland-lake-lbj-loop.geojson",
+  "route_type": "loop",
+  "navigation_junctions": [],
+  "stops": []
+}

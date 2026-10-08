@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "briggs-oakalla-rm-963-loop",
+  "title": "Briggs, Oakalla & RM 963 Loop",
+  "summary": "Short, rural pasture loop linking Briggs and Oakalla along open farm-to-market sweepers with minimal traffic.",
+  "body_markdown": "",
+  "tags": [],
+  "sources": [],
+  "photos": [],
+  "related": [],
+  "updated_on": null,
+  "author_note": null,
+  "category": "Plains & Ranchlands",
+  "color": "#27ae60",
+  "distance_mi": 23.1,
+  "waypoints": [
+    "US 183 / CR 218",
+    "Briggs",
+    "FM 2657",
+    "Oakalla",
+    "RM 963",
+    "Watson",
+    "US 183"
+  ],
+  "via": "US 183 -> Briggs -> FM 2657 North -> Oakalla -> RM 963 West -> Watson -> US 183 South",
+  "geometry_path": "content/geometry/routes/briggs-oakalla-rm-963-loop.geojson",
+  "route_type": "loop",
+  "navigation_junctions": [],
+  "stops": []
+}

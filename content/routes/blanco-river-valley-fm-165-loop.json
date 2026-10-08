@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "id": "blanco-river-valley-fm-165-loop",
+  "title": "Blanco River Valley & FM 165 Loop",
+  "summary": "Scenic river valley ride tracing the Blanco River corridor between Wimberley and Blanco with sweeping hill country vistas.",
+  "body_markdown": "",
+  "tags": [],
+  "sources": [],
+  "photos": [],
+  "related": [],
+  "updated_on": null,
+  "author_note": null,
+  "category": "Lakes & Rivers",
+  "color": "#2980b9",
+  "distance_mi": 70.6,
+  "waypoints": [
+    "Blanco",
+    "Henly",
+    "Wimberley"
+  ],
+  "via": "FM 165 -> Henly -> Wimberley -> RM 2325",
+  "geometry_path": "content/geometry/routes/blanco-river-valley-fm-165-loop.geojson",
+  "route_type": "loop",
+  "navigation_junctions": [],
+  "stops": []
+}

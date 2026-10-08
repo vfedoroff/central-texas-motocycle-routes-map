@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "id": "lime-creek-road-lake-travis-loop",
+  "title": "Lime Creek Road & Lake Travis Loop",
+  "summary": "Classic Austin-area technical road hugging the Lake Travis shoreline with blind corners, camber shifts, and elevation changes.",
+  "body_markdown": "",
+  "tags": [],
+  "sources": [],
+  "photos": [],
+  "related": [],
+  "updated_on": null,
+  "author_note": null,
+  "category": "Twisties & Canyons",
+  "color": "#e74c3c",
+  "distance_mi": 26.7,
+  "waypoints": [
+    "Cedar Park",
+    "Lime Creek",
+    "Volente"
+  ],
+  "via": "FM 2769 -> Lime Creek Rd -> Volente -> Bullick Hollow Rd",
+  "geometry_path": "content/geometry/routes/lime-creek-road-lake-travis-loop.geojson",
+  "route_type": "loop",
+  "navigation_junctions": [],
+  "stops": []
+}

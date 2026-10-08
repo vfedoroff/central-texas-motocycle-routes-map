@@ -1,200 +1,153 @@
-# Agent Guide: Adding & Managing Motorcycle Routes
+# Agent Guide: Managing Ride Atlas Routes and Catalog
 
-This document provides instructions for AI agents and developers on how to add, edit, validate, and bundle routes in this repository.
+This document is the authoritative guide for AI agents and developers working on the Ride Atlas catalog. It details the project architecture, strict standards, environment setup, canonical commands, authored schemas, and step-by-step authoring recipes.
 
 ---
 
 ## 1. Project Architecture
 
-The repository uses a **modular route architecture**:
+The repository uses a **modular Rust catalog architecture**:
 
 ```
 .
-├── routes.json                 # Central route manifest (single source of truth)
-├── routes/                     # Individual modular GeoJSON route files
-│   ├── the-three-twisted-sisters-circuit.geojson
-│   └── ...
-├── gpx/                        # Individual modular GPX 1.1 track files
-│   ├── the-three-twisted-sisters-circuit.gpx
-│   └── ...
-├── scripts/
-│   └── bundle.py               # Compiles routes/ & gpx/ into monolithic deliverables
-├── texas-routes-v2.geojson     # Generated: All routes bundled into one GeoJSON
-├── texas-routes-v2.gpx         # Generated: All tracks bundled into one GPX
-├── index.html                  # Interactive Leaflet web map viewer
-└── README.md                   # Public documentation & catalog
+├── content/                         # Authored source of truth (committed)
+│   ├── routes/                      # Route metadata records (*.json)
+│   ├── geometry/routes/             # Snapped route coordinates (*.geojson)
+│   ├── places/                      # Points of interest / POIs (*.json)
+│   ├── roads/                       # Individual road segments (*.json)
+│   ├── network-paths/routes/        # Verified topological graph paths (*.json)
+│   ├── evidence/routes/             # Road audit evidence records (*.json)
+│   └── photos/                      # Project-owned, licensed media assets
+├── crates/
+│   ├── catalog-model/               # Domain models, schema deserialization, validation
+│   ├── catalog-roads/               # Road graph topology, policy, alignment, evidence
+│   ├── catalog-build/               # Static site generator and staging pipeline
+│   ├── catalog-ui/                  # Interactive Leptos WASM app & Leaflet adapter
+│   ├── route-lint/                  # Read-only catalog & road verification CLI
+│   └── xtask/                       # Task runner (`cargo xtask`)
+├── config/                          # Site and road audit configurations
+├── data/road-network/               # Compressed reference road network graph (*.zst)
+├── tests/browser/                   # Playwright end-to-end browser tests
+├── dist/                            # Generated static build output (git-ignored)
+├── mise.toml                        # Pinned dev environment tools
+└── README.md                        # Public documentation
 ```
+
+### Authored Inputs vs. Generated Artifacts
+- **Authored files** live exclusively in `content/` and `config/`. Agents edit these JSON/GeoJSON files directly.
+- **Generated outputs** live in `dist/` and `.build/`. They are compiled deterministically by `catalog-build` and `trunk`. **Never edit or commit files in `dist/`**.
+- **No Agent Commits or Deployments**: Under this implementation plan, all modifications must remain **uncommitted in the local working tree** for human owner review. Never run `git commit`, `git push`, or deploy commands.
 
 ---
 
-## 2. Route Standards & Guidelines
+## 2. Core Route Standards & Quality Rules
 
-When curating or adding a route:
-1. **Paved Surfaces Only**: Must be suitable for street motorcycles. Exclude dirt/unpaved county roads (e.g. Burnet County unpaved roads).
-2. **Loop or Scenic Corridor**: Prefer circular day-loops (15–180 miles) or scenic riverside/ridge corridors.
-3. **No Dead-End Spurs or Parking Lot Incursions**: 
-   - **Never start or terminate inside a gas station, business parking lot, or private driveway** (e.g. QuikTrip, Murphy USA, storage facilities). All loops must begin and end directly on the public highway/road centerline intersection.
+When curating or editing a route:
+1. **Paved Surfaces Only**:
+   - Must be 100% paved (asphalt or concrete) and suitable for street motorcycles.
+   - Gravel, dirt, and caliche roads are strictly excluded.
+2. **Loop or Scenic Corridor**:
+   - Prefer circular day-loops (15–180 miles) or scenic riverside/ridge corridors.
+3. **Zero Dead-End Spurs or Parking Lot Incursions**:
+   - **Never start or terminate inside a gas station, business parking lot, or private driveway**.
+   - Loops must begin and end directly on public highway/road centerline intersections.
    - Prune accidental out-and-back ranch road spurs, cul-de-sac diversions, and neighborhood loops.
-4. **Snapped to Roads (Junction-to-Junction Routing Only)**: 
-   - Road geometries must be snapped to actual highway and road centerlines (via OSRM, GraphHopper, or real GPS traces).
-   - When generating routes with routing engines, route exclusively between verified primary highway intersection nodes. **Do NOT pass arbitrary intermediate mid-block waypoints** that risk snapping off-centerline into residential subdivisions or frontage roads.
-5. **Zero-Spur Topology Requirement**: 
-   - All loops must pass an automated topology audit with 0 unwanted spurs or self-intersecting detours before bundling.
+4. **Snapped to Road Centerlines**:
+   - Geometries must follow actual highway and road centerlines.
+   - For closed loops, verify that the first and last coordinates match identically.
+5. **Zero-Spur Topology Requirement**:
+   - Every loop must pass an automated topological spur audit with 0 unwanted spurs (`cargo xtask validate`).
+6. **Factual Evidence & Sourcing**:
+   - Sources must include valid `https://` URLs to official transport departments or park authorities with the ISO access date (`YYYY-MM-DD`).
+   - Never guess node IDs, reviewer identities, or personal riding claims. Missing evidence means `review_required`, not `pass`.
 
 ---
 
-## 3. Step-by-Step: How to Add a New Route
+## 3. Developer Environment Bootstrap
 
-### Step 1: Choose Route ID and Category
+Development tools are pinned with [mise](https://mise.jdx.dev/):
 
-Generate a unique `kebab-case` ID (e.g., `bertram-rm-1174-rm-963-loop`).
+```sh
+# 1. Trust and install pinned toolchains (Rust 1.99.0, Node 24.21.0, Trunk 0.21.14)
+mise trust
+mise install
 
-Assign the route to one of the 4 defined categories and use its designated hex color:
+# 2. Configure toolchain components (wasm32 target, clippy, rustfmt)
+mise run setup
+```
 
-| Category | Color | Description / Examples |
+---
+
+## 4. Canonical Commands & Operations
+
+### Read-Only Inspection Operations
+- `cargo xtask check`: Runs `rustfmt --check`, `clippy -D warnings`, and all workspace tests.
+- `cargo xtask validate`: Validates all authored JSON schemas, referential integrity, and route topology (zero spurs).
+- `cargo run --locked -p route-lint -- --route <id> --format json`: Runs isolated catalog and road verification for a specific route with structured JSON diagnostics.
+- `npm run test:browser`: Runs the full Playwright browser test suite across desktop and mobile viewports.
+
+### Explicit Writing Operations
+- `cargo xtask network-restore`: Decompresses and validates the pinned reference road network graph (`data/road-network/graph.json`).
+- `cargo xtask audit-roads --route <id>`: Runs the road network audit and writes verified evidence to `content/evidence/routes/<id>.json`.
+- `cargo xtask build --development`: Performs an atomic static site compilation in development mode (allows unverified previews, written to `dist/`).
+- `cargo xtask build`: Performs a production static site build (strictly enforces that all routes have verified passing road audit evidence).
+- `npm run preview`: Launches the local static preview server on `http://127.0.0.1:8000`.
+
+---
+
+## 5. Recipe: How to Add a New Route
+
+Follow these steps in order when authoring a new route:
+
+### Step 1: Choose Route ID, Category, and Color
+Generate a unique `kebab-case` ID (e.g. `blanco-river-valley-fm-165-loop`). Select one of the 4 canonical categories:
+
+| Category | Hex Color | Focus |
 |---|---|---|
-| **Twisties & Canyons** | `#e74c3c` (Red) | High-elevation changes, technical switchbacks, canyons (e.g., Twisted Sisters, Lime Creek) |
-| **Lakes & Rivers** | `#2980b9` (Blue) | Highland Lakes, river crossings, dam sweeps (e.g., Lake LBJ, Guadalupe River, Llano River) |
-| **German Towns & Culture** | `#8e44ad` (Purple) | Historic settlement trails, wineries, dancehalls (e.g., Fredericksburg, Luckenbach, Sisterdale) |
-| **Savannah & Prairie Sweeps** | `#27ae60` (Green) | Rolling country lanes, post-oak pastures, ranch roads (e.g., Round Top, Bastrop, Oakalla, Bertram) |
+| `Twisties & Canyons` | `#e74c3c` | Elevation changes, switchbacks, technical turns |
+| `Lakes & Rivers` | `#2980b9` | Highland lakes, river corridors, dam crossings |
+| `German Towns & Culture` | `#8e44ad` | Historic trails, dancehalls, heritage towns |
+| `Plains & Ranchlands` | `#27ae60` | Post-oak pastures, open ranch country sweepers |
+
+### Step 2: Author Geometry (`content/geometry/routes/<id>.geojson`)
+Create `content/geometry/routes/<id>.geojson` with a single LineString feature. Coordinates are `[longitude, latitude]`:
+- For loops: ensure `coordinates[0] == coordinates[last]`.
+- Start/end directly on public road intersections, not parking lots.
+
+### Step 3: Author Route Metadata (`content/routes/<id>.json`)
+Create `content/routes/<id>.json` matching the schema in `docs/content-schema.md`:
+- Derive exact `distance_mi`.
+- Define descriptive `waypoints`, `via`, and category tags.
+- Add authoritative `sources` with URLs and `accessed_on` dates.
+- Optional: link route `stops` by referencing existing POI IDs (`place_id`).
+
+### Step 4: Topological Path & Road Audit
+1. Add `content/network-paths/routes/<id>.json` referencing real graph edges and verified public junction nodes.
+2. Restore reference network if not already present: `cargo xtask network-restore`.
+3. Audit route against road network: `cargo xtask audit-roads --route <id>`.
+4. Validate with route-lint: `cargo run --locked -p route-lint -- --route <id> --format json`.
+5. Run full workspace validation: `cargo xtask validate`.
+6. Compile and inspect preview: `cargo xtask build --development && npm run preview`.
 
 ---
 
-### Step 2: Create GeoJSON File (`routes/<id>.geojson`)
+## 6. Recipe: How to Add a Point of Interest (POI)
 
-Create `routes/<id>.geojson` as a standard GeoJSON Feature or FeatureCollection.
+POIs represent landmarks, fuel stops, food, scenic overlooks, or historic destinations.
 
-**Coordinate convention**: GeoJSON uses `[longitude, latitude]` order.
-
-```json
-{
-  "type": "Feature",
-  "properties": {
-    "name": "Bertram, RM 1174 & RM 963 Loop",
-    "category": "Savannah & Prairie Sweeps",
-    "color": "#27ae60",
-    "distance_mi": 54.6
-  },
-  "geometry": {
-    "type": "LineString",
-    "coordinates": [
-      [-97.8765, 30.7423],
-      [-97.8770, 30.7430]
-    ]
-  }
-}
-```
-
-> **Automated Spur Pruning**: Before saving your coordinates, always run the topology check or prune detours. If a route had intermediate waypoints that diverted into a neighborhood, cul-de-sac, or parking lot, prune the detour slice so the coordinate stream stays strictly on the continuous highway centerline. For closed loops, verify that `coordinates[0]` and `coordinates[-1]` meet at the exact same road centerline intersection node.
+1. **Choose Unique ID**: Use `kebab-case` (e.g. `luckenbach-general-store`).
+2. **Create Place Record (`content/places/<id>.json`)**:
+   - Required fields: `schema_version: 1`, `id`, `title`, `summary`, `place_category`, and `coordinates: [lon, lat]`.
+   - Valid categories: `scenic_overlook`, `historic_site`, `fuel_stop`, `food_drink`, `campground`, `park`, `water_crossing`, `general`.
+   - Optional fields: `description` (safe Markdown), `photos`, `sources`, `author_note`, `related` (other `ObjectKey`s).
+3. **Optional Route Linkage**: If this POI is an authored stop on a route, add it to that route's `stops` array in `content/routes/<route-id>.json`.
+4. **Validation**: POIs do not require GPX files, road paths, or centerline audits. Run `cargo xtask validate` and `cargo xtask build --development`. Inspect the marker, details panel, and Google Maps handoff in preview.
 
 ---
 
-### Step 3: Create GPX File (`gpx/<id>.gpx`)
+## 7. Editing & Deletion Behavior
 
-Create `gpx/<id>.gpx` formatted in GPX 1.1 with track points (`<trkpt>`).
-
-**Coordinate convention**: GPX uses attributes `lat="..." lon="..."`.
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<gpx version="1.1" creator="Antigravity Route Curation" xmlns="http://www.topografix.com/GPX/1/1">
-  <trk>
-    <name>Bertram, RM 1174 & RM 963 Loop</name>
-    <trkseg>
-      <trkpt lat="30.7423" lon="-97.8765"></trkpt>
-      <trkpt lat="30.7430" lon="-97.8770"></trkpt>
-    </trkseg>
-  </trk>
-</gpx>
-```
-
----
-
-### Step 4: Register in `routes.json`
-
-Append the route entry to the JSON array in [`routes.json`](routes.json):
-
-```json
-{
-  "id": "bertram-rm-1174-rm-963-loop",
-  "route": "Bertram, RM 1174 & RM 963 Loop",
-  "category": "Savannah & Prairie Sweeps",
-  "color": "#27ae60",
-  "distance_mi": 54.6,
-  "waypoints": [
-    "183 / TX 29 Crossing",
-    "Bertram",
-    "RM 1174",
-    "RM 963",
-    "US 183"
-  ],
-  "via": "TX 29 West -> Bertram -> RM 1174 North -> RM 963 East -> US 183 South",
-  "geojson": "routes/bertram-rm-1174-rm-963-loop.geojson",
-  "gpx": "gpx/bertram-rm-1174-rm-963-loop.gpx"
-}
-```
-
-#### Field Schema:
-- `id` (string, required): Unique `kebab-case` identifier matching filenames.
-- `route` (string, required): Full descriptive title of the route.
-- `category` (string, required): One of the 4 defined categories above.
-- `color` (string, required): Hex color matching category standard.
-- `distance_mi` (number, required): Mileage rounded to 1 decimal place.
-- `waypoints` (array of strings, required): Key towns, intersections, or geographic landmarks along the route. Used by real-time search.
-- `via` (string, required): Ordered list of highways and ranch roads (e.g. `TX 29 -> RM 1174 -> RM 963`).
-- `geojson` (string, required): Relative path to GeoJSON file in `routes/`.
-- `gpx` (string, required): Relative path to GPX file in `gpx/`.
-
----
-
-### Step 5: Rebuild Monolithic Files
-
-Run the bundler script:
-
-```bash
-python3 scripts/bundle.py
-```
-
-This updates:
-- `texas-routes-v2.geojson`
-- `texas-routes-v2.gpx`
-
----
-
-### Step 6: Update Documentation
-
-Add the new route to the numbered catalog in [`README.md`](README.md) under its respective category section:
-```markdown
-21. **Bertram, RM 1174 & RM 963 Loop** (`54.6 mi`) — TX 29 West -> Bertram -> RM 1174 North -> RM 963 East -> US 183 South. Scenic full loop...
-```
-
----
-
-## 4. Verification & Testing
-
-1. **Verify Files Exist, Manifest Syntax & Topology**:
-   ```bash
-   python3 scripts/validate_routes.py <your-route-id>
-   ```
-   This script verifies:
-   - Route metadata schema in `routes.json`.
-   - Matching `.geojson` and `.gpx` files exist.
-   - **Zero unintended spurs or neighborhood detours** along the route coordinates.
-
-2. **Verify Full Manifest & Deliverables**:
-   ```bash
-   python3 scripts/validate_routes.py
-   ```
-
-3. **Launch Local Server**:
-   ```bash
-   python3 -m http.server 8000
-   ```
-
-4. **Check in Browser (`http://localhost:8000`)**:
-   - The new route appears in the sidebar list.
-   - Dynamic route count badge and category pill count increment automatically.
-   - Searching by town, road name, or title highlights the new route card.
-   - Clicking the card pans/zooms to the route bounding box and opens its popup.
-   - Clicking `✕ Show All Routes` closes focus mode, unhides all routes, and zooms out smoothly.
-   - Direct GPX download button works.
+- **Stable Identifiers**: Object IDs are stable primary keys. Never rename an ID without updating all referencing `stops` and `related` entries.
+- **Cache Invalidation**: Any edit to a route's geometry (`.geojson`), network path (`.json`), or audit configuration invalidates its existing road audit evidence. You must re-run `cargo xtask audit-roads --route <id>`.
+- **Deleting Objects**: When deleting a POI, remove all references to it in route `stops` arrays to prevent broken foreign key diagnostics.
+- **Reporting Contribution State**: Always conclude contributions by summarizing changed source paths, actual validation command outputs, pending factual evidence, and local preview status.
