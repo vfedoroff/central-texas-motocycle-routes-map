@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "bluffton-store",
+  "title": "Bluffton Store",
+  "summary": "A stop on Ranch Road 2241 for water, snacks, and a few photos.",
+  "body_markdown": "A handy stop on Ranch Road 2241 in Bluffton. I like it for a break, some water, and a few photos. Maybe pick up some snacks before continuing the ride.",
+  "tags": [
+    "stop",
+    "water",
+    "snacks",
+    "ranch-road-2241"
+  ],
+  "sources": [
+    {
+      "title": "Bluffton Store listing and visitor reviews on Google Maps",
+      "url": "https://maps.app.goo.gl/VNPbsS7hW2RfJFJC6",
+      "accessed_on": "2026-10-09"
+    }
+  ],
+  "photos": [],
+  "related": [],
+  "updated_on": "2026-10-09",
+  "author_note": {
+    "visit_status": "visited",
+    "recommendation": "recommend",
+    "text": "Nice place to stop, buy some water, and take a few photos. Maybe grab some snacks before getting back on the road.",
+    "updated_on": "2026-10-09"
+  },
+  "place_category": "stop",
+  "coordinates": [
+    -98.4918299,
+    30.8208151
+  ],
+  "address": "11635 Ranch Rd 2241, Bluffton, TX 78607",
+  "google_place_id": null
+}

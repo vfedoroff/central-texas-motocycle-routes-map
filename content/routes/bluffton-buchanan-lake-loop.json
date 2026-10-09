@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "id": "bluffton-buchanan-lake-loop",
+  "title": "Bluffton & Buchanan Lake Loop",
+  "summary": "A relaxed ride from Liberty Hill to Bluffton, with views, ranches, and open spaces. Bluffton Store is a nice stop for water, snacks, and photos.",
+  "body_markdown": "What I like about this route is the views, the ranches, and all the open space. I enjoy taking my time and having a relaxed ride through the country.\n\nI start at the US 183 and TX 29 crossing in Liberty Hill and head west through Burnet and Buchanan Dam, then turn toward Bluffton. Bluffton Store is a nice place to stop, buy some water, and take a few photos. Maybe grab some snacks before getting back on the road.\n\nFrom there, I follow Ranch Road 2241 west to TX 29 and ride back to Liberty Hill. It\u2019s about 107 miles altogether, starting and finishing at the same place.",
+  "tags": [
+    "lake-buchanan",
+    "bluffton",
+    "store-stop",
+    "ranch-road-2241"
+  ],
+  "sources": [
+    {
+      "title": "Google Maps itinerary supplied by the rider",
+      "url": "https://www.google.com/maps/dir/30.653272,-97.8758904/Bluffton+Store,+11635+Ranch+Rd+2241,+Bluffton,+TX+78607/30.7620135,-98.6497697/30.653272,-97.8758904/",
+      "accessed_on": "2026-10-09"
+    },
+    {
+      "title": "OpenStreetMap road geometry via OSRM",
+      "url": "https://router.project-osrm.org/route/v1/driving/-97.8758904,30.653272;-98.4918299,30.8208174;-98.6497697,30.7620135;-97.8758904,30.653272?overview=full&geometries=geojson&steps=true",
+      "accessed_on": "2026-10-09"
+    }
+  ],
+  "photos": [],
+  "related": [],
+  "updated_on": "2026-10-09",
+  "category": "Lakes & Rivers",
+  "color": "#6453B8",
+  "distance_mi": 107.4,
+  "waypoints": [
+    "US 183 / TX 29 crossing, Liberty Hill",
+    "Bluffton Store",
+    "Ranch Road 2241 at TX 29",
+    "US 183 / TX 29 crossing, Liberty Hill"
+  ],
+  "via": "TX 29 -> RM 261 -> RM 2241 -> TX 29",
+  "geometry_path": "content/geometry/routes/bluffton-buchanan-lake-loop.geojson",
+  "route_type": "loop",
+  "navigation_junctions": [],
+  "stops": [
+    {
+      "place_id": "bluffton-store",
+      "note": "Stop for water, snacks, and photos."
+    }
+  ],
+  "author_note": {
+    "visit_status": "visited",
+    "recommendation": "recommend",
+    "text": "I like the views, the ranches, and the open spaces. A relaxed ride that suits me.",
+    "updated_on": "2026-10-09"
+  }
+}

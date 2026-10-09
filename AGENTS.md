@@ -23,6 +23,8 @@ Use the pinned toolchain in mise.toml and rust-toolchain.toml. Run `mise install
 
 Use stable kebab-case IDs. A route has metadata in content/routes and GeoJSON in content/geometry/routes. Coordinates use [longitude, latitude]; closed loops use identical first and last coordinates. Maintain references when editing or deleting objects. Cite factual sources and do not invent riding claims. Place records belong in content/places. Keep generated downloads out of Git.
 
+Give each new route a reasonably distinct map color. Check existing route colors and choose a shade that is easy to distinguish, especially from nearby or overlapping routes; avoid automatically reusing the category color.
+
 ## Git and release
 
 Create signed Conventional Commits when requested. Push only when authorized. Internal docs, QA records and plans remain local and ignored. Netlify builds production output from main using netlify.toml.
