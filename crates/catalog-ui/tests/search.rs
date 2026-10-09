@@ -716,3 +716,20 @@ fn test_sort_result_keys_and_catalog_state_sort() {
     assert_eq!(state.sort, CatalogSort::Title);
     assert_eq!(state.remembered_route_sort, CatalogSort::Title);
 }
+
+#[test]
+fn nearby_routes_use_segments_and_one_mile_threshold() {
+    use catalog_ui::search::route_near_places;
+    let place = [[-97.0, 31.0]];
+    assert!(route_near_places(&[[-97.1, 31.0], [-96.9, 31.0]], &place));
+    assert!(route_near_places(&[[-97.1, 31.01], [-96.9, 31.01]], &place));
+    assert!(!route_near_places(
+        &[[-97.1, 31.02], [-96.9, 31.02]],
+        &place
+    ));
+    assert!(!route_near_places(
+        &[[-97.1, 30.9], [-97.1, 31.1], [-96.9, 31.1]],
+        &place
+    ));
+    assert!(!route_near_places(&[], &place));
+}

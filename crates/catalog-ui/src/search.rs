@@ -427,3 +427,26 @@ pub fn filter_summaries_for_overview<'a>(
 
     matched
 }
+
+/// Distance to road segments, using a local projection centered on each place.
+pub fn route_near_places(coordinates: &[[f64; 2]], places: &[[f64; 2]]) -> bool {
+    places.iter().any(|place| {
+        let project = |point: &[f64; 2]| {
+            let x = (point[0] - place[0]).to_radians() * place[1].to_radians().cos() * 6_371_000.0;
+            let y = (point[1] - place[1]).to_radians() * 6_371_000.0;
+            (x, y)
+        };
+        coordinates.windows(2).any(|segment| {
+            let (ax, ay) = project(&segment[0]);
+            let (bx, by) = project(&segment[1]);
+            let (dx, dy) = (bx - ax, by - ay);
+            let length = dx * dx + dy * dy;
+            let t = if length == 0.0 {
+                0.0
+            } else {
+                (-(ax * dx + ay * dy) / length).clamp(0.0, 1.0)
+            };
+            (ax + t * dx).hypot(ay + t * dy) <= 1609.344
+        })
+    })
+}

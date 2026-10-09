@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "id": "cedar-gap-youngsport-country-loop",
+  "title": "Cedar Gap & Youngsport Country Loop",
+  "summary": "An easy country ride with light traffic, good pavement, and enough curves to keep it interesting. Cedar Gap Park makes a handy stop by the lake.",
+  "body_markdown": "I found this an easy ride, mostly on country roads with light traffic and good pavement. There are enough curves to keep me interested, but I didn’t find it especially challenging. It suits the kind of riding I enjoy: taking my time and riding through the country.\n\nI start in Liberty Hill, stop at Cedar Gap Park on Stillhouse Hollow Lake, and return through Youngsport and Stillman Valley. The whole ride is about 79 miles.",
+  "tags": [
+    "country-roads",
+    "lake-stop"
+  ],
+  "sources": [
+    {
+      "title": "Google Maps itinerary supplied by the rider",
+      "url": "https://www.google.com/maps/dir/30.653414,-97.8757754/31.0234022,-97.7537028/Cedar+Gap+Park,+Park+Rd,+Harker+Heights,+TX+76548/30.9249061,-97.7304396/30.6544572,-97.8769374/",
+      "accessed_on": "2026-10-09"
+    },
+    {
+      "title": "OpenStreetMap road geometry via OSRM",
+      "url": "https://router.project-osrm.org/route/v1/driving/-97.8757754,30.653414;-97.7537028,31.0234022;-97.6504,31.0145;-97.7304396,30.9249061;-97.8769374,30.6544572?overview=full&geometries=geojson&steps=true",
+      "accessed_on": "2026-10-09"
+    },
+    {
+      "title": "US Army Corps of Engineers: Cedar Gap Park facilities and free access",
+      "url": "https://www.swf-wc.usace.army.mil/stillhouse/Recreation/Parks/Corpsparks.shtml",
+      "accessed_on": "2026-10-09"
+    }
+  ],
+  "photos": [],
+  "related": [],
+  "updated_on": "2026-10-09",
+  "author_note": {
+    "visit_status": "visited",
+    "text": "Cedar Gap is my stop to stretch my legs, take a few pictures, and use the restroom. It’s free and easy to access, with parking and a view of the lake.",
+    "updated_on": "2026-10-09"
+  },
+  "category": "Plains & Ranchlands",
+  "color": "#B56A00",
+  "distance_mi": 79.4,
+  "waypoints": [
+    "US 183 at TX-29, Liberty Hill",
+    "Chaparral Road, Killeen",
+    "Cedar Gap Park",
+    "Stillman Valley Road near Peaceable Kingdom Road",
+    "US 183, Liberty Hill"
+  ],
+  "via": "US 183 -> TX 138 -> TX 195 -> Chaparral Rd -> FM 3481 -> Cedar Gap Park -> FM 3481 -> FM 2484 -> Stillman Valley Rd -> CR 228 -> TX 138 -> US 183",
+  "geometry_path": "content/geometry/routes/cedar-gap-youngsport-country-loop.geojson",
+  "route_type": "corridor",
+  "navigation_junctions": [],
+  "stops": [
+    {
+      "place_id": "cedar-gap-park",
+      "note": "Free lakeside stop with parking, lake views, and a restroom; short out-and-back park access road."
+    }
+  ]
+}

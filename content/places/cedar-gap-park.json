@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "id": "cedar-gap-park",
+  "title": "Cedar Gap Park",
+  "summary": "A free stop on Stillhouse Hollow Lake with parking, lake views, and a restroom.",
+  "body_markdown": "Cedar Gap Park is operated by the US Army Corps of Engineers on the north side of Stillhouse Hollow Lake. Access is free, with parking, lake views, a boat ramp, and a vault restroom.",
+  "tags": [
+    "lake-view",
+    "parking",
+    "restroom",
+    "free-access"
+  ],
+  "sources": [
+    {
+      "title": "US Army Corps of Engineers: Cedar Gap Park facilities and free access",
+      "url": "https://www.swf-wc.usace.army.mil/stillhouse/Recreation/Parks/Corpsparks.shtml",
+      "accessed_on": "2026-10-09"
+    }
+  ],
+  "photos": [],
+  "related": [
+    {
+      "kind": "route",
+      "id": "cedar-gap-youngsport-country-loop"
+    }
+  ],
+  "updated_on": "2026-10-09",
+  "author_note": null,
+  "place_category": "stop",
+  "coordinates": [
+    -97.650412,
+    31.014464
+  ],
+  "address": "Park Road, Harker Heights, TX 76548",
+  "google_place_id": null
+}

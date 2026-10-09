@@ -31,6 +31,9 @@
     {% if !detail.navigation_links.is_empty() %}
       <div class="nav-links">
         <strong>Navigation:</strong>
+        {% if let Some(point) = &detail.coordinates %}
+          <a href="https://www.google.com/maps/search/?api=1&amp;query={{ point[1] }},{{ point[0] }}" target="_blank" rel="noopener noreferrer">Open in Google Maps</a>
+        {% endif %}
         {% for link in &detail.navigation_links %}
           <a href="{{ link.url }}" target="_blank" rel="noopener">{{ link.label }}</a>
         {% endfor %}

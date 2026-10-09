@@ -28,6 +28,7 @@ pub struct CatalogState {
     pub prior_results_context: Option<PriorResultsContext>,
     pub return_route_key: Option<ObjectKey>,
     pub places_overlay_visible: bool,
+    pub nearby_routes_visible: bool,
     pub saved_keys: HashSet<ObjectKey>,
     pub remembered_route_categories: Vec<String>,
     pub remembered_min_distance_mi: Option<f64>,
@@ -52,6 +53,7 @@ impl Default for CatalogState {
             prior_results_context: None,
             return_route_key: None,
             places_overlay_visible: true,
+            nearby_routes_visible: false,
             saved_keys: HashSet::new(),
             remembered_route_categories: Vec::new(),
             remembered_min_distance_mi: None,
@@ -293,7 +295,7 @@ impl CatalogState {
     }
 
     pub fn visible_place_keys(&self, index: &CatalogIndex) -> Vec<ObjectKey> {
-        if self.places_overlay_visible {
+        if self.places_overlay_visible || self.filter.kind == ObjectKind::Place {
             let mut keys = filter_places_overlay(
                 index,
                 &self.filter.query,

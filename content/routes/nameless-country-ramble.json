@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "id": "nameless-country-ramble",
+  "title": "Nameless Country Ramble",
+  "summary": "A short country ride from Leander to Liberty Hill that I like for its light traffic, good pavement, and relaxed pace.",
+  "body_markdown": "I like this route when I want an easy ride through the country. The roads aren’t too busy, the pavement is good, and I enjoy it without going particularly fast.\n\nIt’s about 18 miles from Leander to Liberty Hill, following Hero Way, Nameless Road, and Round Mountain Road before finishing on TX-29.",
+  "tags": [
+    "country-roads",
+    "relaxed-ride"
+  ],
+  "sources": [
+    {
+      "title": "Google Maps route supplied by the rider",
+      "url": "https://www.google.com/maps/dir/30.5830742,-97.8548010/30.5689725,-97.944377/30.6681738,-97.9116729/30.6535452,-97.8763548/",
+      "accessed_on": "2026-10-09"
+    },
+    {
+      "title": "OpenStreetMap road geometry via OSRM",
+      "url": "https://router.project-osrm.org/route/v1/driving/-97.854801,30.5830742;-97.944377,30.5689725;-97.9116729,30.6681738;-97.8763548,30.6535452?overview=full&geometries=geojson&steps=true",
+      "accessed_on": "2026-10-09"
+    }
+  ],
+  "photos": [],
+  "related": [],
+  "updated_on": "2026-10-09",
+  "author_note": {
+    "visit_status": "visited",
+    "recommendation": "recommend",
+    "text": "What I like most is the quieter roads and the country setting. Good pavement and a relaxed pace make this a personal favorite.",
+    "updated_on": "2026-10-09"
+  },
+  "category": "Plains & Ranchlands",
+  "color": "#007F86",
+  "distance_mi": 18.2,
+  "waypoints": [
+    "Hero Way, Leander",
+    "Nameless Road at Round Mountain Road",
+    "Liberty Hill",
+    "TX-29 near US 183"
+  ],
+  "via": "Hero Way W -> Old FM 2243 -> Nameless Rd -> Round Mountain Rd -> CR 282 -> RM 1869 -> TX-29",
+  "geometry_path": "content/geometry/routes/nameless-country-ramble.geojson",
+  "route_type": "corridor",
+  "navigation_junctions": [],
+  "stops": []
+}

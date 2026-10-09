@@ -286,7 +286,7 @@ pub fn DetailView(
                             })}
 
                             // Google Maps Navigation Links (ahead of exports & secondary actions)
-                            {if !d.navigation_links.is_empty() {
+                            {if !d.navigation_links.is_empty() || (d.key.kind == ObjectKind::Place && d.coordinates.is_some()) {
                                 let links = d.navigation_links.clone();
                                 let maps_kind = match d.key.kind {
                                     ObjectKind::Route => "route",
@@ -296,8 +296,24 @@ pub fn DetailView(
                                 let maps_id = d.key.id.clone();
                                 let start_label_opt = d.start_label.clone();
                                 view! {
-                                    <div class="detail-nav-links">
+                                    <div class=if d.key.kind == ObjectKind::Place { "detail-nav-links place-actions" } else { "detail-nav-links" }>
                                         <span class="nav-links-label"><strong>"Navigation:"</strong></span>
+                                        {if d.key.kind == ObjectKind::Place {
+                                            d.coordinates.map(|point| view! {
+                                                <a
+                                                    href=format!("https://www.google.com/maps/search/?api=1&query={},{}", point[1], point[0])
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    class="detail-link detail-place-maps-link"
+                                                    aria-label="Open in Google Maps"
+                                                >
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M14 3h7v7M21 3l-9 9M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5"/></svg>
+                                                    "Google Maps"
+                                                </a>
+                                            }).into_any()
+                                        } else {
+                                            ().into_any()
+                                        }}
                                         {links.into_iter().map(|lnk| {
                                             let maps_kind_item = maps_kind;
                                             let maps_id_item = maps_id.clone();
@@ -308,6 +324,9 @@ pub fn DetailView(
                                             } else {
                                                 lnk.label.clone()
                                             };
+                                            let is_place = d.key.kind == ObjectKind::Place;
+                                            let accessible_label = link_label.clone();
+                                            let link_label = if is_place { "Get directions".to_string() } else { link_label };
                                             view! {
                                                 <div class=if is_start { "nav-start-block" } else { "nav-link-block" }>
                                                     <div class="nav-link-action-row">
@@ -316,11 +335,15 @@ pub fn DetailView(
                                                             target="_blank"
                                                             rel="noopener"
                                                             class="detail-link detail-maps-link"
+                                                            aria-label=accessible_label
                                                             on:click=move |_| {
                                                                 #[cfg(target_arch = "wasm32")]
                                                                 crate::analytics::track_maps_click(maps_kind_item, &maps_id_item);
                                                             }
                                                         >
+                                                            {is_place.then(|| view! {
+                                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m12 3 9 18-9-4-9 4 9-18Z"/></svg>
+                                                            })}
                                                             {link_label}
                                                         </a>
                                                         {if is_start {
@@ -411,14 +434,16 @@ pub fn DetailView(
                                     ().into_any()
                                 }}
 
-                                <a
-                                    href=page_url
-                                    target="_blank"
-                                    rel="noopener"
-                                    class="detail-link detail-page-link detail-link-secondary"
-                                >
-                                    "View Full Page ↗"
-                                </a>
+                                {(d.key.kind != ObjectKind::Place).then(|| view! {
+                                    <a
+                                        href=page_url
+                                        target="_blank"
+                                        rel="noopener"
+                                        class="detail-link detail-page-link detail-link-secondary"
+                                    >
+                                        "View Full Page ↗"
+                                    </a>
+                                })}
 
                                 {if d.key.kind == ObjectKind::Route {
                                     let rid = d.key.id.clone();

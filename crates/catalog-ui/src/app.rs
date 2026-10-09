@@ -584,6 +584,10 @@ pub fn App() -> impl IntoView {
     let categories_sig = Signal::derive(move || state.get().filter.categories.clone());
     let min_dist_sig = Signal::derive(move || state.get().filter.min_distance_mi);
     let max_dist_sig = Signal::derive(move || state.get().filter.max_distance_mi);
+    let nearby_routes_sig = Signal::derive(move || state.get().nearby_routes_visible);
+    let on_nearby_routes_toggle = Callback::new(move |v| {
+        set_state.update(|s| s.nearby_routes_visible = v);
+    });
     let places_overlay_sig = Signal::derive(move || state.get().places_overlay_visible);
     let on_places_overlay_toggle = Callback::new(move |v| {
         set_state.update(|s| s.set_places_overlay_visible(v));
@@ -866,6 +870,8 @@ pub fn App() -> impl IntoView {
 
     let map_cell_sync = map_cell.clone();
     let loader_state_sync = loader_state.clone();
+    let nearby_keys = std::sync::Arc::new(std::sync::Mutex::new(Vec::<ObjectKey>::new()));
+    let nearby_token = std::sync::Arc::new(std::sync::atomic::AtomicU64::new(0));
     Effect::new(move |_| {
         let cat_opt = catalog.get();
         let cur_state = state.get();
@@ -873,6 +879,12 @@ pub fn App() -> impl IntoView {
 
         if let (Some(cat), Ok(lock)) = (cat_opt, map_cell_sync.lock()) {
             if let Some(map) = lock.as_ref() {
+                let token = nearby_token.fetch_add(1, std::sync::atomic::Ordering::SeqCst) + 1;
+                if let Ok(mut keys) = nearby_keys.lock() {
+                    for key in keys.drain(..) {
+                        map.remove_overview(&key);
+                    }
+                }
                 // 1. Synchronize Places
                 if cur_state.places_overlay_visible || cur_state.filter.kind == ObjectKind::Place {
                     let place_keys = cur_state.visible_place_keys(&cat);
@@ -900,6 +912,100 @@ pub fn App() -> impl IntoView {
                             map.set_places(&js_points);
                         }
                     }
+                }
+
+                // Nearby routes use full geometry, independent of route filters.
+                if cur_state.filter.kind == ObjectKind::Place {
+                    if let Ok(mut loader) = loader_state_sync.lock() {
+                        for key in loader.set_target_candidates(generation, Vec::new()).0 {
+                            map.remove_overview(&key);
+                        }
+                    }
+                    set_roads_limit_exceeded.set(false);
+                    if cur_state.nearby_routes_visible {
+                        let keys = if let Some(key) = cur_state
+                            .selected_key
+                            .as_ref()
+                            .filter(|k| k.kind == ObjectKind::Place)
+                        {
+                            vec![key.clone()]
+                        } else {
+                            crate::search::filter_summaries_with_saved(
+                                &cat,
+                                &cur_state.filter,
+                                Some(&cur_state.saved_keys),
+                            )
+                        };
+                        let points: Vec<_> = cat
+                            .objects
+                            .iter()
+                            .filter(|o| keys.contains(&o.key))
+                            .filter_map(|o| o.point)
+                            .collect();
+                        let routes: Vec<_> = cat
+                            .objects
+                            .iter()
+                            .filter(|o| {
+                                o.key.kind == ObjectKind::Route
+                                    && o.geometry_url.is_some()
+                                    && points.iter().any(|p| {
+                                        let latitude_margin = 1609.344 / 111_000.0;
+                                        let longitude_margin =
+                                            latitude_margin / p[1].to_radians().cos();
+                                        o.bounds[0] <= p[0] + longitude_margin
+                                            && o.bounds[2] >= p[0] - longitude_margin
+                                            && o.bounds[1] <= p[1] + latitude_margin
+                                            && o.bounds[3] >= p[1] - latitude_margin
+                                    })
+                            })
+                            .cloned()
+                            .collect();
+                        let map_clone = map_cell_sync.clone();
+                        let keys_clone = nearby_keys.clone();
+                        let active = nearby_token.clone();
+                        leptos::task::spawn_local(async move {
+                            for route in routes {
+                                if active.load(std::sync::atomic::Ordering::SeqCst) != token {
+                                    return;
+                                }
+                                let Some(url) = route.geometry_url else {
+                                    continue;
+                                };
+                                let Ok(response) = gloo_net::http::Request::get(&url).send().await
+                                else {
+                                    continue;
+                                };
+                                let Ok(mut feature) = response.json::<serde_json::Value>().await
+                                else {
+                                    continue;
+                                };
+                                if active.load(std::sync::atomic::Ordering::SeqCst) != token {
+                                    return;
+                                }
+                                let coordinates: Vec<[f64; 2]> = feature
+                                    .pointer("/geometry/coordinates")
+                                    .and_then(|v| serde_json::from_value(v.clone()).ok())
+                                    .unwrap_or_default();
+                                if !crate::search::route_near_places(&coordinates, &points) {
+                                    continue;
+                                }
+                                if let Some(color) = route.color {
+                                    feature["properties"]["color"] = color.into();
+                                }
+                                if let Ok(js) = js_sys::JSON::parse(&feature.to_string()) {
+                                    if let Ok(lock) = map_clone.lock() {
+                                        if let Some(map) = lock.as_ref() {
+                                            map.set_overview(&route.key, &js);
+                                        }
+                                    }
+                                    if let Ok(mut keys) = keys_clone.lock() {
+                                        keys.push(route.key);
+                                    }
+                                }
+                            }
+                        });
+                    }
+                    return;
                 }
 
                 // 2. Synchronize Overview Lines
@@ -1308,6 +1414,8 @@ pub fn App() -> impl IntoView {
                                 max_distance=max_dist_sig
                                 on_mileage_change=on_mileage_change
                                 places_overlay=places_overlay_sig
+                                nearby_routes=nearby_routes_sig
+                                on_nearby_routes_toggle=on_nearby_routes_toggle
                                 on_places_overlay_toggle=on_places_overlay_toggle
                                 saved_only=saved_only_sig
                                 on_saved_toggle=on_saved_toggle
@@ -1353,6 +1461,7 @@ pub fn App() -> impl IntoView {
                     }
                 }}
                 <footer class="sidebar-footer">
+                    <a class="project-github-link" href="https://github.com/vfedoroff/central-texas-motocycle-routes-map" target="_blank" rel="noopener noreferrer" aria-label="GitHub">"GitHub"<span aria-hidden="true">" ↗"</span></a>
                     <button
                         type="button"
                         class="btn-privacy-settings"
@@ -1373,6 +1482,7 @@ pub fn App() -> impl IntoView {
                 <div class="panel-header">
                     <div class="panel-handle" aria-hidden="true"></div>
                     <div class="panel-snap-controls">
+                        <a class="project-github-link" href="https://github.com/vfedoroff/central-texas-motocycle-routes-map" target="_blank" rel="noopener noreferrer" aria-label="GitHub">"GitHub"<span aria-hidden="true">" ↗"</span></a>
                         <button
                             type="button"
                             class="snap-btn btn-toggle-view"
@@ -1431,6 +1541,8 @@ pub fn App() -> impl IntoView {
                                     max_distance=max_dist_sig
                                     on_mileage_change=on_mileage_change
                                     places_overlay=places_overlay_sig
+                                nearby_routes=nearby_routes_sig
+                                on_nearby_routes_toggle=on_nearby_routes_toggle
                                     on_places_overlay_toggle=on_places_overlay_toggle
                                     saved_only=saved_only_sig
                                     on_saved_toggle=on_saved_toggle

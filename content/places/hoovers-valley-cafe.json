@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "id": "hoovers-valley-cafe",
+  "title": "Hoover’s Valley Cafe",
+  "summary": "A food stop on Park Road 4 in Burnet.",
+  "body_markdown": "Located on Park Road 4 west of Burnet.",
+  "tags": [
+    "food",
+    "burgers",
+    "park-road-4"
+  ],
+  "sources": [
+    {
+      "title": "Hoover’s Valley Cafe on Google Maps",
+      "url": "https://maps.app.goo.gl/WTm6hwBTY5Bq9nkN8",
+      "accessed_on": "2026-10-09"
+    },
+    {
+      "title": "Hoover’s Valley Country Cafe address listing",
+      "url": "https://www.tripadvisor.com/Restaurant_Review-g55559-d511551-Reviews-Hoover_s_Valley_Country_Cafe-Burnet_Texas.html",
+      "accessed_on": "2026-10-09"
+    }
+  ],
+  "photos": [],
+  "related": [],
+  "updated_on": "2026-10-09",
+  "author_note": {
+    "visit_status": "visited",
+    "recommendation": "recommend",
+    "text": "A nice stop to rest, grab a burger, and refuel while riding Park Road 4—one of the most beautiful roads in the Hill Country, in my opinion.",
+    "updated_on": "2026-10-09"
+  },
+  "place_category": "food",
+  "coordinates": [
+    -98.3803722,
+    30.7111823
+  ],
+  "address": "7203 Park Road 4 W, Burnet, TX 78611",
+  "google_place_id": null
+}

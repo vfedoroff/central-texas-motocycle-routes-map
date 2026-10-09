@@ -35,6 +35,8 @@ pub fn Controls(
     max_distance: Signal<Option<f64>>,
     on_mileage_change: Callback<(Option<f64>, Option<f64>)>,
     places_overlay: Signal<bool>,
+    nearby_routes: Signal<bool>,
+    on_nearby_routes_toggle: Callback<bool>,
     on_places_overlay_toggle: Callback<bool>,
     saved_only: Signal<bool>,
     on_saved_toggle: Callback<bool>,
@@ -557,6 +559,13 @@ pub fn Controls(
                         ().into_any()
                     }}
 
+                    {move || (kind.get() == ObjectKind::Place).then(|| view! {
+                        <label class="checkbox-label" title="Routes passing within one mile of the selected place, or places in the results">
+                            <input type="checkbox" prop:checked=move || nearby_routes.get()
+                                on:change=move |ev| { let target: HtmlInputElement = event_target(&ev); on_nearby_routes_toggle.run(target.checked()); } />
+                            <span>"Show nearby routes"</span>
+                        </label>
+                    })}
                     <label class="checkbox-label">
                         <input
                             type="checkbox"
@@ -582,9 +591,9 @@ pub fn Controls(
                             title=move || if is_near_me.get() {
                                 "Proximity sorting active. Click to toggle."
                             } else if has_user_location.get() {
-                                "Sort routes by proximity to your location"
+                                if kind.get() == ObjectKind::Place { "Sort places by proximity to your location" } else { "Sort routes by proximity to your location" }
                             } else {
-                                "Request GPS location to find routes near you"
+                                if kind.get() == ObjectKind::Place { "Request GPS location to find places near you" } else { "Request GPS location to find routes near you" }
                             }
                             on:click=move |_| {
                                 if has_user_location.get() {
@@ -605,7 +614,7 @@ pub fn Controls(
                                 view! {
                                     <span>
                                         <span aria-hidden="true">"📍 "</span>
-                                        "Find routes near me"
+                                        {move || if kind.get() == ObjectKind::Place { "Find places near me" } else { "Find routes near me" }}
                                     </span>
                                 }.into_any()
                             }}

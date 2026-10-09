@@ -20,13 +20,21 @@ fn route(root: &Path, filename: &str, id: &str, geometry: bool) {
 fn all_migrated_routes_load() {
     let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
     let catalog = load_catalog(&root).unwrap();
-    assert_eq!(catalog.objects.len(), 26);
+    let authored_routes = fs::read_dir(root.join("content/routes"))
+        .unwrap()
+        .filter_map(Result::ok)
+        .filter(|entry| entry.path().extension().is_some_and(|ext| ext == "json"))
+        .count();
+    let loaded_routes = catalog
+        .objects
+        .iter()
+        .filter(|o| matches!(o.payload, CatalogPayload::Route { .. }))
+        .count();
     assert!(
-        catalog
-            .objects
-            .iter()
-            .all(|o| matches!(o.payload, CatalogPayload::Route { .. }))
+        authored_routes >= 26,
+        "original migrated routes remain present"
     );
+    assert_eq!(loaded_routes, authored_routes);
     assert!(catalog.objects.iter().any(|o| matches!(
         o.payload,
         CatalogPayload::Route {

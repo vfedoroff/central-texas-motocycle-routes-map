@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "id": "kempner-brick-oven",
+  "title": "Kempner Brick Oven",
+  "summary": "German restaurant and bakery in Kempner, on US 190.",
+  "body_markdown": "A food stop in Kempner serving German food and baked goods.",
+  "tags": [
+    "food",
+    "german",
+    "bakery"
+  ],
+  "sources": [
+    {
+      "title": "Kempner Brick Oven on Google Maps",
+      "url": "https://maps.app.goo.gl/BEw9DgBJYrdG2HQX7",
+      "accessed_on": "2026-10-09"
+    },
+    {
+      "title": "Kempner Brick Oven business listing",
+      "url": "https://www.deutsche-im-ausland.org/adressen-im-ausland/kempner-brick-oven.html",
+      "accessed_on": "2026-10-09"
+    }
+  ],
+  "photos": [],
+  "related": [],
+  "updated_on": "2026-10-09",
+  "author_note": null,
+  "place_category": "food",
+  "coordinates": [
+    -98.0012578,
+    31.0802019
+  ],
+  "address": "12093 US-190, Kempner, TX 76539",
+  "google_place_id": null
+}

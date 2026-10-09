@@ -267,6 +267,26 @@ pub fn Results(
                                     }
                                 });
 
+                                let maps_link = if summary.key.kind == catalog_model::ObjectKind::Place {
+                                    summary.point.map(|point| {
+                                        view! {
+                                            <a
+                                                class="btn-card-maps"
+                                                aria-label="Open in Google Maps"
+                                                href=format!("https://www.google.com/maps/search/?api=1&query={},{}", point[1], point[0])
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                on:click=move |ev: web_sys::MouseEvent| ev.stop_propagation()
+                                                on:keydown=move |ev: web_sys::KeyboardEvent| ev.stop_propagation()
+                                            >
+                                                "Open in Google Maps"
+                                            </a>
+                                        }
+                                    })
+                                } else {
+                                    None
+                                };
+
                                 let card_id = format!("{}-card-{}", id_prefix, summary.key.id);
                                 let title_for_save = summary.title.clone();
                                 let on_keydown_select = {
@@ -276,7 +296,9 @@ pub fn Results(
                                         if k == "Enter" || k == " " {
                                             if let Some(target) = ev.target() {
                                                 if let Ok(target_el) = target.dyn_into::<web_sys::Element>() {
-                                                    if target_el.class_list().contains("btn-card-save") {
+                                                    if target_el.class_list().contains("btn-card-save")
+                                                        || target_el.class_list().contains("btn-card-maps")
+                                                    {
                                                         return;
                                                     }
                                                 }
@@ -326,6 +348,7 @@ pub fn Results(
                                                 {proximity_badge}
                                             </div>
                                             <p class="card-summary">{summary.summary.clone()}</p>
+                                            {maps_link}
                                         </article>
                                     </li>
                                 }
