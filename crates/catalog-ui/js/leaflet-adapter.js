@@ -578,12 +578,13 @@
           iconAnchor: [12, 12]
         });
 
-        const marker = L.marker([lat, lon], {
+        // Location is an indicator: let clicks reach routes beneath the pin.
+        L.marker([lat, lon], {
           icon: userIcon,
+          interactive: false,
+          keyboard: false,
           zIndexOffset: 1000
         }).addTo(userLocationGroup);
-
-        marker.bindPopup('<div class="user-location-popup"><strong>Your Location</strong></div>');
 
         const currentZoom = map.getZoom();
         map.setView([lat, lon], currentZoom < 10 ? 11 : currentZoom);
