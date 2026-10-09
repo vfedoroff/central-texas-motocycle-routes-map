@@ -15,6 +15,8 @@ pulldown-cmark.workspace = true
 serde_json.workspace = true
 sha2.workspace = true
 url.workspace = true
+fontdue = "0.9.3"
+ureq = "=3.4.2"
 
 [dev-dependencies]
 tempfile = "=3.23.0"

@@ -180,66 +180,6 @@ test.describe('PWA and Offline Capabilities', () => {
     expect(isSaved).toBe(false);
   });
 
-  test('Offline route pack download and CacheStorage management', async ({ page, isMobile }) => {
-    await page.goto('/');
-    const panel = getPanel(page, isMobile);
-    await expect(panel.locator('.results-list')).toBeVisible();
-
-    // Open first route detail
-    const firstCard = panel.locator('.result-card').first();
-    const routeId = await firstCard.getAttribute('data-id');
-    expect(routeId).toBeTruthy();
-    await firstCard.click();
-
-    await expect(panel.locator('.detail-title')).toBeVisible();
-
-    // Offline pack section should be rendered
-    const offlineSection = panel.locator('.offline-pack-section');
-    await expect(offlineSection).toBeVisible();
-
-    const downloadBtn = offlineSection.locator('.btn-offline-download');
-    await expect(downloadBtn).toBeVisible();
-    await expect(downloadBtn).toContainText('Download for Offline Use');
-
-    // Click download
-    await downloadBtn.click();
-
-    // Progress bar or downloaded badge should appear
-    await expect(offlineSection.locator('.offline-badge-downloaded, .offline-progress-bar-bg')).toBeVisible();
-
-    // Wait until downloaded badge appears
-    const downloadedBadge = offlineSection.locator('.offline-badge-downloaded');
-    await expect(downloadedBadge).toBeVisible({ timeout: 10000 });
-    await expect(downloadedBadge).toContainText('Available Offline');
-
-    // Verify resources exist in CacheStorage
-    const cacheVerified = await page.evaluate(async (rid) => {
-      const cacheName = `ride-atlas-pack-route-${rid}`;
-      if (!window.caches) return false;
-      const has = await caches.has(cacheName);
-      if (!has) return false;
-      const cache = await caches.open(cacheName);
-      const keys = await cache.keys();
-      return keys.length > 0;
-    }, routeId);
-    expect(cacheVerified).toBe(true);
-
-    // Verify Remove Offline Pack button is present and works
-    const removePackBtn = offlineSection.locator('.btn-offline-remove');
-    await expect(removePackBtn).toBeVisible();
-    await removePackBtn.click();
-
-    // Should return to download state
-    await expect(offlineSection.locator('.btn-offline-download')).toBeVisible();
-
-    // Cache should be deleted
-    const cacheAfterRemove = await page.evaluate(async (rid) => {
-      const cacheName = `ride-atlas-pack-route-${rid}`;
-      return await caches.has(cacheName);
-    }, routeId);
-    expect(cacheAfterRemove).toBe(false);
-  });
-
   test('Service worker script exists and excludes tile and analytics caching', async ({ request }) => {
     const swResp = await request.get('/service-worker.js');
     expect(swResp.status()).toBe(200);
@@ -261,7 +201,10 @@ test.describe('PWA and Offline Capabilities', () => {
     expect(typeof manifest.site_version).toBe('string');
     expect(manifest.site_version.length).toBe(64); // SHA-256 hex
     expect(Array.isArray(manifest.packs)).toBe(true);
-    expect(manifest.packs.length).toBe(26);
+    const catalog = await (await request.get('/catalog-index.json')).json();
+    const routeIds = catalog.objects.filter((object: any) => object.key.kind === 'route')
+      .map((object: any) => object.key.id).sort();
+    expect(manifest.packs.map((pack: any) => pack.key.id).sort()).toEqual(routeIds);
 
     for (const pack of manifest.packs) {
       expect(pack.key.kind).toBe('route');

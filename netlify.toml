@@ -28,3 +28,6 @@
   [headers.values]
     Cache-Control = "public, max-age=2592000, stale-while-revalidate=5184000"
     Access-Control-Allow-Origin = "*"
+
+[[plugins]]
+  package = "./plugins/netlify-plugin-social-map-cache"

@@ -1,3 +1,4 @@
+mod common;
 use anyhow::Result;
 use catalog_build::{BuildConfig, build_site, validate_build_paths};
 use std::fs;
@@ -58,6 +59,7 @@ edition = "2024"
 }"##;
     fs::write(root.join("content/routes/test-route.json"), route)?;
 
+    common::seed_map_cache(root)?;
     Ok(dir)
 }
 
@@ -82,6 +84,14 @@ fn test_successful_dev_build() -> Result<()> {
     assert!(out.join("data/routes/test-route.json").exists());
     assert!(out.join("data/geometry/routes/test-route.geojson").exists());
     assert!(out.join("data/overview/routes/test-route.geojson").exists());
+
+    let html = fs::read_to_string(out.join("routes/test-route/index.html"))?;
+    assert!(html.contains("property=\"og:title\" content=\"Test Route\""));
+    assert!(html.contains("name=\"twitter:card\" content=\"summary_large_image\""));
+    assert!(html.contains("/social/routes/test-route.png"));
+    assert!(html.contains("<img class=\"route-preview\" src=\"/social/routes/test-route.png\""));
+    let preview = image::open(out.join("social/routes/test-route.png"))?;
+    assert_eq!((preview.width(), preview.height()), (1200, 630));
 
     // Verify index content
     let index_text = fs::read_to_string(out.join("catalog-index.json"))?;

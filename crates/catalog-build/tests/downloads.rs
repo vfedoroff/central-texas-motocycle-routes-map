@@ -1,3 +1,4 @@
+mod common;
 use anyhow::Result;
 use catalog_build::{BuildConfig, build_site};
 use catalog_model::ObjectDetail;
@@ -55,6 +56,7 @@ edition = "2024"
 }"##;
     fs::write(root.join("content/routes/sample-loop.json"), route)?;
 
+    common::seed_map_cache(root)?;
     Ok(dir)
 }
 

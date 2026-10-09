@@ -330,6 +330,22 @@ pub fn build_site(build_config: &BuildConfig) -> Result<()> {
                 )?;
 
                 // Static HTML page
+                let social_dir = staging_root.join("social/routes");
+                fs::create_dir_all(&social_dir)?;
+                crate::social::render_route_image(
+                    coords,
+                    color,
+                    &obj.title,
+                    *distance_mi,
+                    &social_dir.join(format!("{}.png", obj.key.id)),
+                    &canonical_root.join(".cache/social-maps"),
+                )
+                .with_context(|| {
+                    format!(
+                        "Failed to generate geographic preview for route {}",
+                        obj.key.id
+                    )
+                })?;
                 let page_dir = staging_root.join(format!("routes/{}", obj.key.id));
                 fs::create_dir_all(&page_dir)?;
                 let page_html = crate::pages::render_route_page_with_preview(

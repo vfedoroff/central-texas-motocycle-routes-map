@@ -915,7 +915,12 @@ pub fn App() -> impl IntoView {
                 }
 
                 // Nearby routes use full geometry, independent of route filters.
-                if cur_state.filter.kind == ObjectKind::Place {
+                if cur_state.filter.kind == ObjectKind::Place
+                    && !cur_state
+                        .selected_key
+                        .as_ref()
+                        .is_some_and(|key| matches!(key.kind, ObjectKind::Route | ObjectKind::Road))
+                {
                     if let Ok(mut loader) = loader_state_sync.lock() {
                         for key in loader.set_target_candidates(generation, Vec::new()).0 {
                             map.remove_overview(&key);

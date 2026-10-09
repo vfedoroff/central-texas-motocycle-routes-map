@@ -1,7 +1,7 @@
 use catalog_build::{build_stage_links, google_maps_links};
 use catalog_model::{
     CatalogObject, CatalogPayload, NavigationJunction, NavigationMode, ObjectKey, ObjectKind,
-    PlaceCategory, RouteType, Surface,
+    PlaceCategory, RouteType, Source, Surface,
 };
 use url::Url;
 
@@ -169,43 +169,19 @@ fn test_road_without_junctions_directions_to_start() {
 }
 
 #[test]
-fn test_route_staged_junctions_7_points() {
-    // 7 points: [0..=4] (stage 1) then [4..=6] (stage 2)
-    let points = vec![
-        [-98.00, 30.00], // 0: Origin S1
-        [-98.01, 30.01], // 1: WP1 S1
-        [-98.02, 30.02], // 2: WP2 S1
-        [-98.03, 30.03], // 3: WP3 S1
-        [-98.04, 30.04], // 4: Dest S1 & Origin S2
-        [-98.05, 30.05], // 5: WP1 S2
-        [-98.06, 30.06], // 6: Dest S2
-    ];
-
-    let route = make_route_with_junctions("seven-point-loop", "Seven Point Loop", points);
+fn route_with_many_junctions_has_one_mobile_compatible_link() {
+    let points = (0..13)
+        .map(|i| [-98.0 + f64::from(i) * 0.01, 30.0])
+        .collect();
+    let route = make_route_with_junctions("long-route", "Long Route", points);
     let links = google_maps_links(&route);
-
-    assert_eq!(links.len(), 2);
-
-    // Stage 1
-    assert_eq!(links[0].label, "Stage 1");
-    assert_eq!(links[0].mode, NavigationMode::Stage);
-    let parsed1 = Url::parse(&links[0].url).expect("valid URL");
-    let query1: std::collections::HashMap<_, _> = parsed1.query_pairs().into_owned().collect();
-    assert_eq!(query1.get("origin"), Some(&"30,-98".to_string()));
-    assert_eq!(query1.get("destination"), Some(&"30.04,-98.04".to_string()));
-    assert_eq!(
-        query1.get("waypoints"),
-        Some(&"30.01,-98.01|30.02,-98.02|30.03,-98.03".to_string())
-    );
-
-    // Stage 2: starts at preceding endpoint (index 4)
-    assert_eq!(links[1].label, "Stage 2");
-    assert_eq!(links[1].mode, NavigationMode::Stage);
-    let parsed2 = Url::parse(&links[1].url).expect("valid URL");
-    let query2: std::collections::HashMap<_, _> = parsed2.query_pairs().into_owned().collect();
-    assert_eq!(query2.get("origin"), Some(&"30.04,-98.04".to_string()));
-    assert_eq!(query2.get("destination"), Some(&"30.06,-98.06".to_string()));
-    assert_eq!(query2.get("waypoints"), Some(&"30.05,-98.05".to_string()));
+    assert_eq!(links.len(), 1);
+    assert_eq!(links[0].label, "Open ride in Google Maps");
+    let parsed = Url::parse(&links[0].url).unwrap();
+    let query: std::collections::HashMap<_, _> = parsed.query_pairs().into_owned().collect();
+    assert_eq!(query["waypoints"].split('|').count(), 3);
+    assert_eq!(query["origin"], "30,-98");
+    assert_eq!(query["destination"], "30,-97.88");
 }
 
 #[test]
@@ -248,29 +224,62 @@ fn test_missing_navigation_when_no_geometry() {
 }
 
 #[test]
-fn test_route_without_junctions_falls_back_to_start_link() {
+fn test_route_without_junctions_opens_route_geometry() {
     let mut route = make_route_with_junctions("fallback-route", "Fallback Route", vec![]);
     route.geometry = Some(vec![[-98.25, 30.15], [-98.30, 30.20]]);
     let links = google_maps_links(&route);
 
     assert_eq!(links.len(), 1);
-    assert_eq!(links[0].mode, NavigationMode::Start);
-    assert_eq!(links[0].label, "Directions to start of Fallback Route");
+    assert_eq!(links[0].mode, NavigationMode::Stage);
+    assert_eq!(links[0].label, "Open ride in Google Maps");
 
     let parsed = Url::parse(&links[0].url).expect("valid URL");
     let query: std::collections::HashMap<_, _> = parsed.query_pairs().into_owned().collect();
-    assert_eq!(query.get("destination"), Some(&"30.15,-98.25".to_string()));
+    assert_eq!(query.get("origin"), Some(&"30.15,-98.25".to_string()));
+    assert_eq!(query.get("destination"), Some(&"30.2,-98.3".to_string()));
     assert_eq!(query.get("api"), Some(&"1".to_string()));
     assert_eq!(query.get("travelmode"), Some(&"driving".to_string()));
 }
 
 #[test]
-fn test_staged_navigation_retains_numbered_wording_without_start_cta_replacement() {
+fn route_junctions_use_single_share_button() {
     let points = vec![[-98.00, 30.00], [-98.01, 30.01], [-98.02, 30.02]];
     let route = make_route_with_junctions("staged-route", "Staged Route", points);
     let links = google_maps_links(&route);
 
     assert_eq!(links.len(), 1);
     assert_eq!(links[0].mode, NavigationMode::Stage);
-    assert_eq!(links[0].label, "Stage 1");
+    assert_eq!(links[0].label, "Open ride in Google Maps");
+}
+
+#[test]
+fn authored_google_itinerary_is_used_instead_of_start_directions() {
+    let mut route = make_route_with_junctions("triangle", "Triangle", vec![]);
+    let itinerary = "https://www.google.com/maps/dir/30.654,-97.877/31.051,-98.182/30.758,-98.228/30.654,-97.877/";
+    route.sources.push(Source {
+        title: "Rider itinerary".into(),
+        url: itinerary.into(),
+        accessed_on: "2026-10-09".into(),
+    });
+    let links = google_maps_links(&route);
+    assert_eq!(links.len(), 1);
+    assert_eq!(links[0].url, itinerary);
+    assert_eq!(links[0].label, "Open ride in Google Maps");
+    assert_eq!(links[0].mode, NavigationMode::Stage);
+}
+
+#[test]
+fn geometry_fallback_preserves_loop_and_intermediate_points() {
+    let mut route = make_route_with_junctions("loop", "Loop", vec![]);
+    route.geometry = Some(vec![
+        [-98.0, 30.0],
+        [-98.2, 30.2],
+        [-98.4, 30.0],
+        [-98.0, 30.0],
+    ]);
+    let links = google_maps_links(&route);
+    let parsed = Url::parse(&links[0].url).unwrap();
+    let query: std::collections::HashMap<_, _> = parsed.query_pairs().into_owned().collect();
+    assert_eq!(query["origin"], query["destination"]);
+    assert_eq!(query["waypoints"], "30.2,-98.2|30,-98.4");
 }

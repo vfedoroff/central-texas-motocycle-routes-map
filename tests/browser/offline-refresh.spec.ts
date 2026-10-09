@@ -21,7 +21,7 @@ test('legacy pack without version metadata requires refresh even for same-size c
   expect((await page.evaluate(async (id) => (window as any).CatalogPWA.getPackStatus(id), id)).status).toBe('downloaded');
 });
 
-test('outdated pack explains refresh and retains removal action', async ({ page, isMobile }) => {
+test('outdated legacy packs do not add offline controls to route details', async ({ page, isMobile }) => {
   await page.goto('/');
   await expect(page.getByRole('searchbox', { name: 'Search catalog' })).toBeVisible();
   await page.evaluate(async (id) => (window as any).CatalogPWA.downloadPack(id, () => {}), id);
@@ -34,10 +34,9 @@ test('outdated pack explains refresh and retains removal action', async ({ page,
   await page.getByRole('searchbox', { name: 'Search catalog' }).fill('lime');
   const panel = page.locator(isMobile ? '.bottom-panel' : '.sidebar');
   await panel.locator(`.result-card[data-id="${id}"]`).click();
-  await expect(panel.getByText(/Offline pack is outdated/)).toBeVisible();
-  await expect(panel.getByRole('button', { name: 'Update offline pack', exact: true })).toBeVisible();
-  await panel.getByRole('button', { name: 'Update offline pack', exact: true }).click();
-  await expect(panel.getByText(/Available Offline/)).toBeVisible();
-  await panel.getByRole('button', { name: 'Remove Offline Pack', exact: true }).click();
-  await expect(panel.getByRole('button', { name: 'Download for Offline Use', exact: true })).toBeVisible();
+  await expect(panel.locator('.detail-title')).toBeVisible();
+  await expect(panel.locator('.offline-pack-section')).toHaveCount(0);
+  await expect(panel.getByRole('button', { name: /offline pack/i })).toHaveCount(0);
+  await panel.locator('.export-route-summary').click();
+  await expect(panel.locator('.detail-gpx-download')).toBeVisible();
 });

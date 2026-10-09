@@ -1,3 +1,4 @@
+mod common;
 use anyhow::Result;
 use catalog_build::{BuildConfig, build_index, build_site};
 use catalog_model::{
@@ -71,6 +72,7 @@ edition = "2024"
 }"#;
     fs::write(root.join("content/places/lookout-point.json"), place)?;
 
+    common::seed_map_cache(root)?;
     Ok(())
 }
 

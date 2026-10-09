@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "id": "triangle",
+  "title": "Triangle",
+  "summary": "An 81.5-mile highway loop from Liberty Hill through Lampasas and Burnet, with a stop at the World’s Largest Spur.",
+  "body_markdown": "Start at the US 183 and TX 29 crossing in Liberty Hill and head north on US 183 to Lampasas. Stop at the World’s Largest Spur for a shot of your bike, then follow US 281 south to Burnet and TX 29 east back to Liberty Hill.",
+  "tags": [
+    "highway-loop",
+    "lampasas",
+    "burnet",
+    "us-183",
+    "us-281",
+    "tx-29"
+  ],
+  "sources": [
+    {
+      "title": "Google Maps itinerary reconstructed from the rider’s screenshot",
+      "url": "https://www.google.com/maps/dir/30.654021,-97.877436/31.0513232,-98.1821902/30.758,-98.2285/30.654021,-97.877436/",
+      "accessed_on": "2026-10-09"
+    },
+    {
+      "title": "OpenStreetMap road geometry via OSRM",
+      "url": "https://router.project-osrm.org/route/v1/driving/-97.877436,30.654021;-98.1821902,31.0513232;-98.2285,30.758;-97.877436,30.654021?overview=full&geometries=geojson&steps=true",
+      "accessed_on": "2026-10-09"
+    }
+  ],
+  "photos": [],
+  "related": [],
+  "updated_on": "2026-10-09",
+  "author_note": {
+    "visit_status": "visited",
+    "recommendation": "recommend",
+    "text": "I call this route Triangle. It follows highways, but I haven’t found them busy. A good route to put miles on the bike and enjoy a relaxed ride at highway speeds.",
+    "updated_on": "2026-10-09"
+  },
+  "category": "Plains & Ranchlands",
+  "color": "#C03F84",
+  "distance_mi": 81.5,
+  "waypoints": [
+    "US 183 / TX 29 crossing, Liberty Hill",
+    "World’s Largest Spur, Lampasas",
+    "Burnet",
+    "US 183 / TX 29 crossing, Liberty Hill"
+  ],
+  "via": "US 183 North -> US 281 South -> TX 29 East",
+  "geometry_path": "content/geometry/routes/triangle.geojson",
+  "route_type": "loop",
+  "navigation_junctions": [],
+  "stops": [
+    {
+      "place_id": "worlds-largest-spur",
+      "note": "Take a shot of your bike with the world’s largest spur in the background."
+    }
+  ]
+}

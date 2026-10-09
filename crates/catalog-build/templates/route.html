@@ -6,9 +6,25 @@
   <title>{{ title }} - Ride Atlas</title>
   <meta name="description" content="{{ description }}">
   <link rel="canonical" href="{{ canonical_url }}">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ride Atlas">
+  <meta property="og:title" content="{{ title }}">
+  <meta property="og:description" content="{{ description }}">
+  <meta property="og:url" content="{{ canonical_url }}">
+  <meta property="og:image" content="{{ social_image_url }}">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="{{ title }} route on a geographic map, with its starting point marked">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ title }}">
+  <meta name="twitter:description" content="{{ description }}">
+  <meta name="twitter:image" content="{{ social_image_url }}">
+  <meta name="twitter:image:alt" content="{{ title }} route on a geographic map, with its starting point marked">
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 1rem; color: #222; }
     header { margin-bottom: 2rem; }
+    .route-preview { display: block; width: 100%; height: auto; border-radius: 12px; margin: 1rem 0; }
     h1 { margin-bottom: 0.5rem; }
     .badge { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 4px; color: #fff; font-size: 0.85rem; font-weight: bold; }
     .meta { color: #555; margin-bottom: 1.5rem; }
@@ -23,10 +39,11 @@
     .export-route-summary { font-weight: 600; cursor: pointer; user-select: none; }
     section { margin-top: 2rem; border-top: 1px solid #eee; padding-top: 1.5rem; }
   </style>
+  <script>window.location.replace("/?kind=route&id={{ detail.key.id }}");</script>
 </head>
 <body>
   <header>
-    <p><a href="/">&larr; Back to Map</a></p>
+    <p><a href="/?kind=route&amp;id={{ detail.key.id }}">Open ride on map</a></p>
     <h1>{{ detail.title }}</h1>
     {% if let Some(cat) = &detail.category %}
       {% match cat.as_str() %}
@@ -45,6 +62,9 @@
       {% endmatch %}
     {% endif %}
     <p class="summary">{{ detail.summary }}</p>
+    <a href="/?kind=route&amp;id={{ detail.key.id }}" aria-label="Open {{ title }} on map">
+      <img class="route-preview" src="/social/routes/{{ detail.key.id }}.png" width="1200" height="630" alt="{{ title }} route on a geographic map, with its starting point marked">
+    </a>
     <div class="meta">
       {% if let Some(dist) = detail.distance_mi %}
         <p><strong>Distance:</strong> {{ dist }} miles</p>
@@ -87,6 +107,7 @@
               <a href="{{ link.url }}" target="_blank" rel="noopener">{{ link.label }}</a>
           {% endmatch %}
         {% endfor %}
+        <p class="nav-route-note">Google Maps calculates the route, so it may differ from the ride shown here.</p>
       </div>
     {% endif %}
 

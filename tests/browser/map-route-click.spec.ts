@@ -95,3 +95,52 @@ for (const offset of [0, 8]) {
     await expect(panel.locator('.detail-title')).toHaveText(title);
   });
 }
+
+test('selecting a nearby route from Places hides other route lines', async ({ page, isMobile }) => {
+  await page.goto('/');
+  const panel = page.locator(isMobile ? '.bottom-panel' : '.sidebar');
+  await panel.getByRole('tab', { name: 'Places', exact: true }).click();
+  await panel.getByRole('searchbox', { name: 'Search catalog' }).fill('spur');
+  if (isMobile) await panel.getByRole('button', { name: /Filters/ }).click();
+  await panel.getByRole('checkbox', { name: 'Show nearby routes' }).check();
+  if (isMobile) {
+    await panel.getByRole('button', { name: /Filters/ }).click();
+    await page.getByRole('button', { name: 'Show map', exact: true }).click();
+    await page.waitForTimeout(550);
+  }
+  const lineCount = () => page.evaluate(() => {
+    let count = 0;
+    (document.getElementById('map-canvas') as any)._rideAtlasAdapter.map.eachLayer((layer: any) => {
+      if (layer.feature?.geometry?.type === 'LineString' && layer.options.weight === 3.5) count++;
+    });
+    return count;
+  });
+  await expect.poll(lineCount).toBeGreaterThan(0);
+  await expect.poll(() => page.evaluate(() => {
+    let found = false;
+    (document.getElementById('map-canvas') as any)._rideAtlasAdapter.map.eachLayer((layer: any) => {
+      if (layer.feature?.properties?.title === 'Triangle' && layer.options.weight === 3.5) found = true;
+    });
+    return found;
+  })).toBe(true);
+  const point = await page.evaluate(() => {
+    const map = (document.getElementById('map-canvas') as any)._rideAtlasAdapter.map;
+    let coords: number[] | undefined;
+    map.eachLayer((layer: any) => {
+      if (layer.feature?.properties?.title === 'Triangle' && layer.options.weight === 3.5) {
+        const points = layer.feature.geometry.coordinates;
+        coords = points[Math.floor(points.length / 4)];
+      }
+    });
+    if (!coords) throw new Error('Triangle overview missing');
+    map.setView([coords[1], coords[0]], 14, { animate: false });
+    const p = map.latLngToContainerPoint([coords[1], coords[0]]);
+    const rect = map.getContainer().getBoundingClientRect();
+    return { x: rect.left + p.x, y: rect.top + p.y };
+  });
+  await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+  if (isMobile) await page.touchscreen.tap(point.x, point.y);
+  else await page.mouse.click(point.x, point.y);
+  await expect(panel.locator('.detail-title')).toHaveText('Triangle');
+  await expect.poll(lineCount).toBe(0);
+});

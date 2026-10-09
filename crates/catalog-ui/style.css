@@ -2565,3 +2565,11 @@ body {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
+
+.detail-share-actions {
+  margin-top: 12px;
+}
+
+.detail-share-actions .share-status:empty {
+  display: none;
+}

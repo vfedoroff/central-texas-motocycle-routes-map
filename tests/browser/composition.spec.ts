@@ -14,7 +14,9 @@ test.describe('composed UI and static pages', () => {
     expect(scripts.length).toBeGreaterThan(0);
   });
 
-  test('static route page renders without Leptos application', async ({ page }) => {
+  test('static route page renders without Leptos application', async ({ browser, baseURL }) => {
+    const context = await browser.newContext({ javaScriptEnabled: false, baseURL });
+    const page = await context.newPage();
     const response = await page.goto('/routes/the-three-twisted-sisters-circuit/');
     expect(response?.status()).toBe(200);
 
@@ -25,6 +27,7 @@ test.describe('composed UI and static pages', () => {
     // Static pages do not mount Leptos UI map
     await expect(page.locator('#map-canvas')).toHaveCount(0);
     await expect(page.locator('.sidebar')).toHaveCount(0);
+    await context.close();
   });
 
   test('generated downloads are accessible with valid status', async ({ request }) => {

@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "id": "worlds-largest-spur",
+  "title": "World’s Largest Spur",
+  "summary": "A giant spur landmark on US 281 in Lampasas.",
+  "body_markdown": "The World’s Largest Spur is a roadside landmark in Lampasas, recognized by Guinness World Records as the largest spur.",
+  "tags": [
+    "landmark",
+    "lampasas",
+    "us-281"
+  ],
+  "sources": [
+    {
+      "title": "The World’s Largest Spur on Google Maps",
+      "url": "https://maps.app.goo.gl/L9D5SZkqbVGiG6Le8",
+      "accessed_on": "2026-10-09"
+    },
+    {
+      "title": "Guinness World Records: Largest spur",
+      "url": "https://www.guinnessworldrecords.com/world-records/largest-spur",
+      "accessed_on": "2026-10-09"
+    },
+    {
+      "title": "Texas Sites to See: World’s Largest Spur address",
+      "url": "https://trta.org/wp-content/uploads/2024/12/Texas-Sites-to-See-by-Gary-Schepf.pdf",
+      "accessed_on": "2026-10-09"
+    }
+  ],
+  "photos": [],
+  "related": [
+    {
+      "kind": "route",
+      "id": "triangle"
+    }
+  ],
+  "updated_on": "2026-10-09",
+  "author_note": {
+    "visit_status": "visited",
+    "recommendation": "recommend",
+    "text": "A true Texas attraction and a good reason to take a ride to Lampasas on 183 or 281. Nice place to take a shot of your bike with the world’s largest spur in the background.",
+    "updated_on": "2026-10-09"
+  },
+  "place_category": "landmark",
+  "coordinates": [
+    -98.1821902,
+    31.0513232
+  ],
+  "address": "1906 US-281, Lampasas, TX 76550",
+  "google_place_id": null
+}

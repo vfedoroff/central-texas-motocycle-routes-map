@@ -7,6 +7,8 @@ pub mod media;
 pub mod pages;
 pub mod places_along_route;
 pub mod pwa;
+pub mod social;
+mod social_places;
 pub mod staging;
 
 pub use builder::{BuildConfig, build_site};

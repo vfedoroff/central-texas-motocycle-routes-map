@@ -49,20 +49,16 @@ pub fn DetailView(
     let (show_manual_copy, set_show_manual_copy) = signal(false);
     let (manual_url, set_manual_url) = signal(String::new());
 
-    let on_copy_route_link = move |route_id: String| {
+    let on_copy_route_link = move |route_id: String, title: String| {
         set_copy_status.set(None);
         let mut deep_url = String::new();
         if let Some(win) = web_sys::window() {
             if let Ok(origin) = win.location().origin() {
-                deep_url = format!(
-                    "{}/?kind=route&id={}",
-                    origin.trim_end_matches('/'),
-                    route_id
-                );
+                deep_url = format!("{}/routes/{}/", origin.trim_end_matches('/'), route_id);
             }
         }
         if deep_url.is_empty() {
-            deep_url = format!("/?kind=route&id={}", route_id);
+            deep_url = format!("/routes/{}/", route_id);
         }
 
         let url_to_copy = deep_url.clone();
@@ -70,13 +66,53 @@ pub fn DetailView(
         {
             if let Some(win) = web_sys::window() {
                 let nav = win.navigator();
+                if let Ok(value) =
+                    js_sys::Reflect::get(nav.as_ref(), &wasm_bindgen::JsValue::from_str("share"))
+                {
+                    if let Some(share) = value.dyn_ref::<js_sys::Function>() {
+                        let data = js_sys::Object::new();
+                        let _ = js_sys::Reflect::set(&data, &"title".into(), &title.into());
+                        let _ =
+                            js_sys::Reflect::set(&data, &"url".into(), &url_to_copy.clone().into());
+                        if let Ok(result) = share.call1(nav.as_ref(), &data) {
+                            let promise = js_sys::Promise::resolve(&result);
+                            wasm_bindgen_futures::spawn_local(async move {
+                                if let Err(err) =
+                                    wasm_bindgen_futures::JsFuture::from(promise).await
+                                {
+                                    let name = js_sys::Reflect::get(&err, &"name".into())
+                                        .ok()
+                                        .and_then(|v| v.as_string());
+                                    if name.as_deref() != Some("AbortError") {
+                                        match wasm_bindgen_futures::JsFuture::from(
+                                            nav.clipboard().write_text(&url_to_copy),
+                                        )
+                                        .await
+                                        {
+                                            Ok(_) => {
+                                                set_copy_status
+                                                    .set(Some("Link copied".to_string()));
+                                                set_show_manual_copy.set(false);
+                                            }
+                                            Err(_) => {
+                                                set_show_manual_copy.set(true);
+                                                set_manual_url.set(url_to_copy);
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                            return;
+                        }
+                    }
+                }
                 let clipboard = nav.clipboard();
                 let promise = clipboard.write_text(&url_to_copy);
                 let url_for_fallback = url_to_copy.clone();
                 wasm_bindgen_futures::spawn_local(async move {
                     match wasm_bindgen_futures::JsFuture::from(promise).await {
                         Ok(_) => {
-                            set_copy_status.set(Some("Route link copied".to_string()));
+                            set_copy_status.set(Some("Link copied".to_string()));
                             set_show_manual_copy.set(false);
                         }
                         Err(_) => {
@@ -227,6 +263,52 @@ pub fn DetailView(
                                 })}
 
                                 <p class="detail-summary">{d.summary.clone()}</p>
+                                <div class="detail-share-actions">
+                                {if d.key.kind == ObjectKind::Route {
+                                    let rid = d.key.id.clone();
+                                    let share_title = d.title.clone();
+                                    let on_copy = on_copy_route_link.clone();
+                                    view! {
+                                        <button
+                                            type="button"
+                                            class="detail-link btn-copy-route-link"
+                                            on:click=move |_| on_copy(rid.clone(), share_title.clone())
+                                        >
+                                            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 0.4rem">
+                                                <path d="M12 16V3m-5 5 5-5 5 5M5 13v7h14v-7" />
+                                            </svg>"Share ride"
+                                        </button>
+                                    }.into_any()
+                                } else {
+                                    ().into_any()
+                                }}
+
+                                <div class="share-status" role="status" aria-live="polite">
+                                    {move || copy_status.get().unwrap_or_default()}
+                                </div>
+
+                                {move || if show_manual_copy.get() {
+                                    view! {
+                                        <div class="manual-copy-container">
+                                            <label for="manual-copy-input" class="manual-copy-label">"Copy this link manually:"</label>
+                                            <input
+                                                id="manual-copy-input"
+                                                type="text"
+                                                readonly
+                                                class="input-manual-copy"
+                                                prop:value=move || manual_url.get()
+                                                on:focus=move |ev| {
+                                                    if let Ok(input) = event_target::<web_sys::HtmlInputElement>(&ev).dyn_into::<web_sys::HtmlInputElement>() {
+                                                        input.select();
+                                                    }
+                                                }
+                                            />
+                                        </div>
+                                    }.into_any()
+                                } else {
+                                    ().into_any()
+                                }}
+                                </div>
                             </div>
 
                             // Route stats
@@ -370,6 +452,9 @@ pub fn DetailView(
                                                 </div>
                                             }
                                         }).collect_view()}
+                                        {(d.key.kind == ObjectKind::Route).then(|| view! {
+                                            <p class="nav-route-note">"Google Maps calculates the route, so it may differ from the ride shown here."</p>
+                                        })}
                                     </div>
                                 }.into_any()
                             } else {
@@ -418,23 +503,7 @@ pub fn DetailView(
                                     }
                                 })}
 
-                                {if d.key.kind == ObjectKind::Route {
-                                    let rid = d.key.id.clone();
-                                    let on_copy = on_copy_route_link.clone();
-                                    view! {
-                                        <button
-                                            type="button"
-                                            class="detail-link btn-copy-route-link"
-                                            on:click=move |_| on_copy(rid.clone())
-                                        >
-                                            "Copy route link"
-                                        </button>
-                                    }.into_any()
-                                } else {
-                                    ().into_any()
-                                }}
-
-                                {(d.key.kind != ObjectKind::Place).then(|| view! {
+                                {(d.key.kind == ObjectKind::Road).then(|| view! {
                                     <a
                                         href=page_url
                                         target="_blank"
@@ -445,40 +514,7 @@ pub fn DetailView(
                                     </a>
                                 })}
 
-                                {if d.key.kind == ObjectKind::Route {
-                                    let rid = d.key.id.clone();
-                                    view! {
-                                        <OfflinePackControls route_id=rid />
-                                    }.into_any()
-                                } else {
-                                    ().into_any()
-                                }}
 
-                                <div class="sr-only" role="status" aria-live="polite">
-                                    {move || copy_status.get().unwrap_or_default()}
-                                </div>
-
-                                {move || if show_manual_copy.get() {
-                                    view! {
-                                        <div class="manual-copy-container">
-                                            <label for="manual-copy-input" class="manual-copy-label">"Copy this link manually:"</label>
-                                            <input
-                                                id="manual-copy-input"
-                                                type="text"
-                                                readonly
-                                                class="input-manual-copy"
-                                                prop:value=move || manual_url.get()
-                                                on:focus=move |ev| {
-                                                    if let Ok(input) = event_target::<web_sys::HtmlInputElement>(&ev).dyn_into::<web_sys::HtmlInputElement>() {
-                                                        input.select();
-                                                    }
-                                                }
-                                            />
-                                        </div>
-                                    }.into_any()
-                                } else {
-                                    ().into_any()
-                                }}
                             </div>
 
                             // Body HTML
@@ -658,176 +694,5 @@ pub fn DetailView(
                 }
             }}
         </article>
-    }
-}
-
-#[component]
-pub fn OfflinePackControls(route_id: String) -> impl IntoView {
-    let (status, set_status) = signal(crate::offline::PackStatus::NotDownloaded);
-    let (error_msg, set_error_msg) = signal(Option::<String>::None);
-
-    let route_id_clone = route_id.clone();
-    Effect::new(move |_| {
-        let rid = route_id_clone.clone();
-        leptos::task::spawn_local(async move {
-            let st = crate::offline::get_pack_status(&rid).await;
-            set_status.set(st);
-        });
-    });
-
-    let on_download = {
-        let rid = route_id.clone();
-        move |_| {
-            let rid = rid.clone();
-            set_error_msg.set(None);
-            set_status.set(crate::offline::PackStatus::Downloading {
-                percent: 0,
-                downloaded_bytes: 0,
-                total_bytes: 0,
-            });
-            leptos::task::spawn_local(async move {
-                let rid_progress = rid.clone();
-                let res = crate::offline::download_pack(
-                    &rid,
-                    move |percent, downloaded_bytes, total_bytes| {
-                        set_status.set(crate::offline::PackStatus::Downloading {
-                            percent,
-                            downloaded_bytes,
-                            total_bytes,
-                        });
-                    },
-                )
-                .await;
-                match res {
-                    Ok(_) => {
-                        let st = crate::offline::get_pack_status(&rid_progress).await;
-                        set_status.set(st);
-                    }
-                    Err(err) => {
-                        set_error_msg.set(Some(err));
-                        let st = crate::offline::get_pack_status(&rid_progress).await;
-                        set_status.set(st);
-                    }
-                }
-            });
-        }
-    };
-
-    let on_cancel = {
-        let rid = route_id.clone();
-        move |_| {
-            crate::offline::cancel_download(&rid);
-            set_status.set(crate::offline::PackStatus::NotDownloaded);
-        }
-    };
-
-    let on_remove = {
-        let rid = route_id;
-        move |_| {
-            let rid = rid.clone();
-            leptos::task::spawn_local(async move {
-                crate::offline::remove_pack(&rid).await;
-                set_status.set(crate::offline::PackStatus::NotDownloaded);
-            });
-        }
-    };
-
-    view! {
-        <div class="offline-pack-section">
-            <h4 class="offline-pack-title">"Offline Pack"</h4>
-            <p class="offline-pack-disclaimer">"Caches route geometry, details, and GPX file. Does not include offline map tiles."</p>
-            {move || {
-                match status.get() {
-                    crate::offline::PackStatus::NotDownloaded => {
-                        view! {
-                            <div class="offline-pack-actions">
-                                <button
-                                    type="button"
-                                    class="btn-offline-download"
-                                    on:click=on_download.clone()
-                                >
-                                    "Download for Offline Use"
-                                </button>
-                            </div>
-                        }.into_any()
-                    }
-                    crate::offline::PackStatus::NeedsDownload { total_bytes } => {
-                        let mb = (total_bytes as f64) / (1024.0 * 1024.0);
-                        view! {
-                            <div>
-                                <p role="status">"Offline pack is outdated or incomplete. Update it before your next ride."</p>
-                                <div class="offline-pack-actions">
-                                <span class="offline-pack-size">{format!("Size: {:.1} MB", mb)}</span>
-                                <button
-                                    type="button"
-                                    class="btn-offline-download"
-                                    on:click=on_download.clone()
-                                >
-                                    "Update offline pack"
-                                </button>
-                                <button
-                                    type="button"
-                                    class="btn-offline-remove"
-                                    on:click=on_remove.clone()
-                                >
-                                    "Remove Offline Pack"
-                                </button>
-                                </div>
-                            </div>
-                        }.into_any()
-                    }
-                    crate::offline::PackStatus::Downloading { percent, downloaded_bytes, total_bytes } => {
-                        let dl_mb = (downloaded_bytes as f64) / (1024.0 * 1024.0);
-                        let tot_mb = (total_bytes as f64) / (1024.0 * 1024.0);
-                        view! {
-                            <div class="offline-pack-progress-container">
-                                <div class="offline-progress-bar-bg">
-                                    <div
-                                        class="offline-progress-bar-fill"
-                                        style=format!("width: {}%;", percent)
-                                    ></div>
-                                </div>
-                                <span class="offline-progress-label">
-                                    {format!("{}% ({:.1} / {:.1} MB)", percent, dl_mb, tot_mb)}
-                                </span>
-                                <button
-                                    type="button"
-                                    class="btn-offline-cancel"
-                                    on:click=on_cancel.clone()
-                                >
-                                    "Cancel"
-                                </button>
-                            </div>
-                        }.into_any()
-                    }
-                    crate::offline::PackStatus::Downloaded { total_bytes } => {
-                        let mb = (total_bytes as f64) / (1024.0 * 1024.0);
-                        view! {
-                            <div class="offline-pack-downloaded">
-                                <span class="offline-badge-downloaded">
-                                    {format!("✓ Available Offline ({:.1} MB)", mb)}
-                                </span>
-                                <button
-                                    type="button"
-                                    class="btn-offline-remove"
-                                    on:click=on_remove.clone()
-                                >
-                                    "Remove Offline Pack"
-                                </button>
-                            </div>
-                        }.into_any()
-                    }
-                }
-            }}
-            {move || {
-                error_msg.get().map(|err| {
-                    view! {
-                        <div class="offline-pack-error" role="alert">
-                            {err}
-                        </div>
-                    }
-                })
-            }}
-        </div>
     }
 }

@@ -27,10 +27,16 @@ test.describe('object selection and details', () => {
     await expect(panel.locator('.detail-summary')).toBeVisible();
     await expect(panel.locator('.detail-distance')).toContainText('mi');
 
+    const sharePosition = await panel.getByRole('button', { name: 'Share ride', exact: true }).boundingBox();
+    const summaryPosition = await panel.locator('.detail-summary').boundingBox();
+    const distancePosition = await panel.locator('.detail-distance').boundingBox();
+    expect(sharePosition!.y).toBeGreaterThan(summaryPosition!.y + summaryPosition!.height);
+    expect(sharePosition!.y + sharePosition!.height).toBeLessThanOrEqual(distancePosition!.y);
+
     // Page link
     const pageLink = panel.locator('.detail-page-link');
-    await expect(pageLink).toBeVisible();
-    await expect(pageLink).toHaveAttribute('href', '/routes/the-three-twisted-sisters-circuit/');
+    await expect(pageLink).toHaveCount(0);
+    await expect(panel.getByRole('button', { name: 'Share ride', exact: true })).toBeVisible();
 
     // Export route disclosure
     const exportDisclosure = panel.locator('.export-route-disclosure');
@@ -476,10 +482,16 @@ test.describe('object selection and details', () => {
     const navSection = panel.locator('.detail-nav-links');
     await expect(navSection).toBeVisible();
 
-    // Check Start CTA copy and explainer
-    const startLink = navSection.locator('.detail-maps-link', { hasText: 'Directions to start' });
-    await expect(startLink).toBeVisible();
-    await expect(navSection.locator('.nav-start-explainer')).toHaveText('This gets you to the start; it does not follow the full ride.');
+    // Route navigation includes an origin and destination, rather than only the start.
+    const routeLinks = navSection.locator('.detail-maps-link');
+    await expect(routeLinks).toHaveCount(1);
+    await expect(routeLinks).toHaveText('Open ride in Google Maps');
+    await expect(navSection.locator('.nav-route-note')).toHaveText('Google Maps calculates the route, so it may differ from the ride shown here.');
+    const href = await routeLinks.first().getAttribute('href');
+    const routeUrl = new URL(href!);
+    expect(routeUrl.searchParams.has('origin')).toBeTruthy();
+    expect(routeUrl.searchParams.has('destination')).toBeTruthy();
+    await expect(navSection.locator('.nav-start-explainer')).toHaveCount(0);
 
     // Export route disclosure is present and contains GPX / GeoJSON
     const exportDisclosure = panel.locator('.export-route-disclosure');
@@ -488,12 +500,14 @@ test.describe('object selection and details', () => {
     await expect(exportDisclosure.locator('.detail-gpx-download')).toBeVisible();
     await expect(exportDisclosure.locator('.detail-geojson-download')).toBeVisible();
 
-    // Offline pack disclaimer is present
-    await expect(panel.locator('.offline-pack-disclaimer')).toHaveText('Caches route geometry, details, and GPX file. Does not include offline map tiles.');
+    // GPX exports remain available without a separate offline-pack control.
+    await expect(panel.locator('.offline-pack-section')).toHaveCount(0);
+    await expect(panel.getByRole('button', { name: 'Download for Offline Use', exact: true })).toHaveCount(0);
   });
 
   test('copied route link restores selected ride', async ({ context, page, isMobile }) => {
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    await page.addInitScript(() => Object.defineProperty(navigator, 'share', { value: undefined, configurable: true }));
 
     await page.goto('/');
     const panel = getPanel(page, isMobile);
@@ -516,18 +530,18 @@ test.describe('object selection and details', () => {
 
     // Live region announces success
     const statusMsg = panel.locator('div[role="status"][aria-live="polite"]');
-    await expect(statusMsg).toHaveText('Route link copied');
+    await expect(statusMsg).toHaveText('Link copied');
 
     // Read clipboard content
     const copiedText = await page.evaluate(() => navigator.clipboard.readText());
-    expect(copiedText).toContain('kind=route');
-    expect(copiedText).toContain('id=the-three-twisted-sisters-circuit');
+    expect(copiedText).toContain('/routes/the-three-twisted-sisters-circuit/');
     // Ensure sender search query is excluded
     expect(copiedText).not.toContain('twisted+sisters');
     expect(copiedText).not.toContain('query=');
 
     // Open copied URL in page
     await page.goto(copiedText);
+    await expect(page).toHaveURL(/kind=route&id=the-three-twisted-sisters-circuit/);
     const newPanel = getPanel(page, isMobile);
     await expect(newPanel.locator('.detail-view')).toBeVisible();
     await expect(newPanel.locator('.detail-title')).toContainText('The Three Twisted Sisters');
@@ -539,7 +553,34 @@ test.describe('object selection and details', () => {
     await expect(newPanel.locator('.results-list')).toBeVisible();
   });
 
+  test('Share ride uses native sharing and leaves cancellation quiet', async ({ page, isMobile }) => {
+    await page.addInitScript(() => {
+      Object.defineProperty(navigator, 'share', { configurable: true, value: async (data: ShareData) => {
+        (window as any).__sharedRide = data;
+        throw new DOMException('Cancelled', 'AbortError');
+      }});
+    });
+    await page.goto('/?kind=route&id=triangle');
+    const panel = getPanel(page, isMobile);
+    await panel.getByRole('button', { name: 'Share ride', exact: true }).click();
+    await expect.poll(() => page.evaluate(() => (window as any).__sharedRide?.url)).toContain('/routes/triangle/');
+    await expect(panel.locator('.manual-copy-container')).toHaveCount(0);
+    await expect(panel.locator('.share-status')).toBeEmpty();
+  });
+
+  test('shared page retains preview without JavaScript', async ({ browser }) => {
+    const context = await browser.newContext({ javaScriptEnabled: false });
+    const page = await context.newPage();
+    await page.goto('http://127.0.0.1:8000/routes/triangle/');
+    const preview = page.locator('.route-preview');
+    await expect(preview).toBeVisible();
+    await expect.poll(() => preview.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBe(1200);
+    await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
+    await context.close();
+  });
+
   test('copy route link fallback when clipboard write fails', async ({ page, isMobile }) => {
+    await page.addInitScript(() => Object.defineProperty(navigator, 'share', { value: undefined, configurable: true }));
     await page.goto('/?kind=route&id=the-three-twisted-sisters-circuit');
     const panel = getPanel(page, isMobile);
 
@@ -562,6 +603,6 @@ test.describe('object selection and details', () => {
     await expect(manualContainer.locator('.manual-copy-label')).toHaveText('Copy this link manually:');
     const manualInput = manualContainer.locator('.input-manual-copy');
     await expect(manualInput).toBeVisible();
-    await expect(manualInput).toHaveValue(/kind=route&id=the-three-twisted-sisters-circuit/);
+    await expect(manualInput).toHaveValue(/\/routes\/the-three-twisted-sisters-circuit\//);
   });
 });

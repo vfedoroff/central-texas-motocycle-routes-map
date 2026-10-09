@@ -5,8 +5,9 @@ const MAX_URL_LENGTH: usize = 2048;
 
 /// Build Google Maps navigation links for a catalog object.
 /// - Places: destination directions with optional Google Place ID (mode: Destination).
-/// - Roads / Routes without verified junctions: directions to first coordinate (mode: Start).
-/// - Routes with verified junctions: staged navigation URLs up to 5 points per stage (mode: Stage).
+/// - Roads: directions to first coordinate (mode: Start).
+/// - Routes: authored Google Maps itinerary, verified junctions, or simplified geometry.
+/// - Route links use at most five points when generated (mode: Stage).
 pub fn google_maps_links(object: &CatalogObject) -> Vec<NavigationLink> {
     match &object.payload {
         CatalogPayload::Place {
@@ -47,17 +48,85 @@ pub fn google_maps_links(object: &CatalogObject) -> Vec<NavigationLink> {
             navigation_junctions,
             ..
         } => {
+            if let Some(source) = object.sources.iter().find(|source| {
+                Url::parse(&source.url).is_ok_and(|url| {
+                    url.scheme() == "https"
+                        && matches!(url.host_str(), Some("www.google.com" | "google.com"))
+                        && url.path().starts_with("/maps/dir/")
+                        && source.url.len() <= MAX_URL_LENGTH
+                })
+            }) {
+                return vec![NavigationLink {
+                    label: "Open ride in Google Maps".to_string(),
+                    url: source.url.clone(),
+                    mode: NavigationMode::Stage,
+                }];
+            }
             let junction_points: Vec<[f64; 2]> = navigation_junctions
                 .iter()
                 .filter_map(|j| j.coordinates)
                 .collect();
 
             if junction_points.len() >= 2 {
-                build_stage_links(&object.title, &junction_points)
+                build_route_link(&object.title, &junction_points)
             } else {
-                directions_to_start(object)
+                let Some(geometry) = &object.geometry else {
+                    return Vec::new();
+                };
+                let points = simplify_navigation_points(geometry);
+                build_route_link(&object.title, &points)
             }
         }
+    }
+}
+
+/// Keep one link with at most three intermediate points for mobile Maps URLs.
+fn build_route_link(title: &str, points: &[[f64; 2]]) -> Vec<NavigationLink> {
+    let selected = if points.len() > 5 {
+        (0..5)
+            .map(|i| points[i * (points.len() - 1) / 4])
+            .collect::<Vec<_>>()
+    } else {
+        points.to_vec()
+    };
+    let mut links = build_stage_links(title, &selected);
+    if let Some(link) = links.first_mut() {
+        link.label = "Open ride in Google Maps".to_string();
+    }
+    links
+}
+
+/// Preserve bends and loop endpoints while reducing dense road geometry.
+/// Google Maps recalculates roads between these navigation points.
+fn simplify_navigation_points(points: &[[f64; 2]]) -> Vec<[f64; 2]> {
+    if points.len() < 3 {
+        return points.to_vec();
+    }
+    let first = points[0];
+    let last = points[points.len() - 1];
+    let dx = last[0] - first[0];
+    let dy = last[1] - first[1];
+    let length_sq = dx * dx + dy * dy;
+    let mut farthest = (0, 0.0_f64);
+    for (index, point) in points.iter().enumerate().take(points.len() - 1).skip(1) {
+        let t = if length_sq == 0.0 {
+            0.0
+        } else {
+            (((point[0] - first[0]) * dx + (point[1] - first[1]) * dy) / length_sq).clamp(0.0, 1.0)
+        };
+        let distance =
+            (point[0] - first[0] - t * dx).powi(2) + (point[1] - first[1] - t * dy).powi(2);
+        if distance > farthest.1 {
+            farthest = (index, distance);
+        }
+    }
+    if farthest.1 > 0.005_f64.powi(2) {
+        let mut left = simplify_navigation_points(&points[..=farthest.0]);
+        left.pop();
+        left.extend(simplify_navigation_points(&points[farthest.0..]));
+        left
+    } else {
+        vec![first, last]
     }
 }
 

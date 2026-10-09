@@ -436,6 +436,12 @@ test.describe('catalog controls', () => {
   });
 
   test('UX-02: places empty state indicates no places added and provides Browse routes recovery', async ({ page, isMobile }) => {
+    await page.route('**/catalog-index.json', async route => {
+      const response = await route.fetch();
+      const catalog = await response.json();
+      catalog.objects = catalog.objects.filter((object: any) => object.key.kind !== 'place');
+      await route.fulfill({ response, json: catalog });
+    });
     await page.goto('/');
     const panel = getPanel(page, isMobile);
 
@@ -604,7 +610,7 @@ test.describe('catalog controls', () => {
     expect(overflowCheck.scrollWidth).toBeLessThanOrEqual(overflowCheck.clientWidth);
   });
 
-  test('QA-05: category badges use accessible high-contrast text and solid colors', async ({ page, isMobile }) => {
+  test('QA-05: category badges use accessible high-contrast text and solid colors', async ({ page, isMobile, browser, baseURL }) => {
     await page.goto('/');
     const panel = getPanel(page, isMobile);
     const badge = panel.locator('.badge-category').first();
@@ -616,12 +622,15 @@ test.describe('catalog controls', () => {
     expect(badgeStyle).toContain('color: #991b1b');
 
     // Check full-page static route badge
-    await page.goto('/routes/austin-to-llano-hill-country-blast/index.html');
-    const fullBadge = page.locator('.badge');
+    const context = await browser.newContext({ javaScriptEnabled: false, baseURL });
+    const staticPage = await context.newPage();
+    await staticPage.goto('/routes/austin-to-llano-hill-country-blast/index.html');
+    const fullBadge = staticPage.locator('.badge');
     await expect(fullBadge).toBeVisible();
     const fullBadgeStyle = await fullBadge.getAttribute('style');
     // Twisties & Canyons full page badge uses high contrast #b91c1c
     expect(fullBadgeStyle).toContain('#b91c1c');
+    await context.close();
   });
 
   test('QA-06: desktop and mobile trees have unique IDs and correct control relationships', async ({ page, isMobile }) => {
