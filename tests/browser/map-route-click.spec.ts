@@ -6,7 +6,7 @@ const title = 'Lime Creek Road & Lake Travis Loop';
 const geometry = JSON.parse(readFileSync(`dist/data/overview/routes/${id}.geojson`, 'utf8')).geometry;
 
 test('route under the location marker remains selectable after clearing filters', async ({ context, page, isMobile }) => {
-  const location = { latitude: 30.5788, longitude: -97.8531 };
+  const location = { latitude: 30.5788, longitude: -97.8531, accuracy: 100 };
   await context.grantPermissions(['geolocation']);
   await context.setGeolocation(location);
   await page.goto('/');

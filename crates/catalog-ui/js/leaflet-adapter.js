@@ -560,7 +560,9 @@
         userLocationGroup.clearLayers();
 
         if (typeof accuracy === 'number' && accuracy > 0) {
+          // Share the route renderer so the accuracy overlay cannot cover its canvas.
           L.circle([lat, lon], {
+            renderer: canvasRenderer,
             radius: Math.min(accuracy, 8000),
             color: '#2563eb',
             weight: 1,
