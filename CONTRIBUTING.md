@@ -1,5 +1,7 @@
 # Contributing to Ride Atlas
 
+Please read the [Code of Conduct](CODE_OF_CONDUCT.md) before participating.
+
 Thank you for your interest in contributing to the Central Texas Ride Atlas! This guide explains how to add routes, places of interest, and improvements while maintaining our strict standards for safety, accuracy, and code quality.
 
 ---

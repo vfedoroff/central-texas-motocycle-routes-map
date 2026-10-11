@@ -64,6 +64,8 @@ Edit authored files in `content/` and `config/`. Routes require metadata and can
 
 See [AGENTS.md](AGENTS.md), [CONTRIBUTING.md](CONTRIBUTING.md) for the authoring workflows.
 
+Community expectations are in the [Code of Conduct](CODE_OF_CONDUCT.md).
+
 ## Netlify deployment
 
 Netlify publishes `dist/` from the production branch, normally `main`. The build configuration installs the pinned Trunk version and WebAssembly target before running `cargo xtask build`. Node dependencies are installed from `package-lock.json`.
