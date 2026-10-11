@@ -26,6 +26,14 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
 
+  if (typeof document !== 'undefined') {
+    const connection = document.createElement('link');
+    connection.rel = 'preconnect';
+    connection.href = 'https://server.arcgisonline.com';
+    connection.crossOrigin = 'anonymous';
+    document.head.appendChild(connection);
+  }
+
   const DEFAULT_OVERVIEW_BOUNDS = [
     [-100.2055, 29.6695],
     [-96.5996, 30.9865]
@@ -92,6 +100,8 @@
       preferCanvas: true
     });
 
+    map.attributionControl.setPosition('topright');
+
     // Basemap tile layers matching legacy app
     const baseLayers = {
       'Topographic': L.tileLayer(
@@ -131,6 +141,27 @@
       )
     };
 
+    const statusControl = L.control({ position: 'topleft' });
+    const tileStatus = document.createElement('div');
+    tileStatus.className = 'map-tile-status';
+    tileStatus.setAttribute('role', 'status');
+    tileStatus.textContent = 'Loading map…';
+    statusControl.onAdd = () => tileStatus;
+    statusControl.addTo(map);
+    Object.values(baseLayers).forEach(layer => {
+      layer.on('loading', () => { tileStatus.hidden = false; tileStatus.textContent = 'Loading map…'; });
+      layer.on('tileload', () => { tileStatus.hidden = true; });
+      layer.on('tileerror', () => { tileStatus.hidden = false; tileStatus.textContent = 'Some map tiles could not load. Try another map layer.'; });
+    });
+    const keyControl = L.control({ position: 'topleft' });
+    keyControl.onAdd = () => {
+      const key = document.createElement('div');
+      key.className = 'map-key';
+      key.textContent = 'Colors identify rides · Select a ride to highlight it';
+      L.DomEvent.disableClickPropagation(key);
+      return key;
+    };
+    keyControl.addTo(map);
     baseLayers['Topographic'].addTo(map);
     L.control.layers(baseLayers, null, { position: 'topright' }).addTo(map);
 
@@ -146,11 +177,13 @@
         const padding = computeFitPadding();
         isProgrammaticMove = true;
         try {
-          map.fitBounds(llBounds, {
-            paddingTopLeft: padding.paddingTopLeft,
-            paddingBottomRight: padding.paddingBottomRight,
-            animate: false
-          });
+          const bounds = L.latLngBounds(llBounds);
+          const topLeft = L.point(padding.paddingTopLeft);
+          const bottomRight = L.point(padding.paddingBottomRight);
+          const zoom = Math.max(8, map.getBoundsZoom(bounds, false, topLeft.add(bottomRight)));
+          // Apply sheet padding at the final zoom, so mobile framing stays over Texas.
+          const center = map.project(bounds.getCenter(), zoom).add(bottomRight.subtract(topLeft).divideBy(2));
+          map.setView(map.unproject(center, zoom), zoom, { animate: false });
         } finally {
           queueMicrotask(() => { isProgrammaticMove = false; });
         }
@@ -314,8 +347,8 @@
           renderer: canvasRenderer,
           style: {
             color: color,
-            weight: 3.5,
-            opacity: 0.85
+            weight: 2.5,
+            opacity: selectionLayer ? 0.18 : 0.55
           }
         });
 
@@ -336,8 +369,16 @@
           titleDiv.className = 'map-popup-title';
           titleDiv.textContent = feature.properties.title;
           layer.bindPopup(titleDiv);
+          const label = document.createElement('span');
+          label.textContent = feature.properties.title;
+          layer.bindTooltip(label, { sticky: true, className: 'route-name-label' });
         }
 
+        layer.on('mouseover', () => { layer.setStyle({ weight: 5, opacity: 1 }); layer.bringToFront(); });
+        layer.on('mouseout', () => {
+          layer.setStyle({ weight: 2.5, opacity: selectionLayer ? 0.18 : 0.55 });
+          if (selectionLayer && selectionLayer.bringToFront) selectionLayer.bringToFront();
+        });
         overviewGroup.addLayer(layer);
         overviewMap.set(kStr, layer);
       },
@@ -453,7 +494,13 @@
           popupDiv.className = 'selection-popup';
           popupDiv.textContent = feature.properties.title;
           selectionLayer.bindPopup(popupDiv);
+          if (feature.geometry && feature.geometry.type !== 'Point') {
+            const label = document.createElement('span');
+            label.textContent = feature.properties.title;
+            selectionLayer.bindTooltip(label, { permanent: true, direction: 'center', className: 'route-name-label' }).openTooltip();
+          }
         }
+        overviewMap.forEach(layer => layer.setStyle({ weight: 2.5, opacity: 0.18 }));
       },
 
       hasSelection: function () {
@@ -483,6 +530,7 @@
           map.removeLayer(startMarker);
           startMarker = null;
         }
+        overviewMap.forEach(layer => layer.setStyle({ weight: 2.5, opacity: 0.55 }));
         selectedKey = null;
         lastSelectionBounds = null;
         userPannedSelection = false;

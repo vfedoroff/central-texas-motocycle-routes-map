@@ -75,7 +75,7 @@ for (const offset of [0, 8]) {
     await expect.poll(() => page.evaluate(() => {
       const map = (document.getElementById('map-canvas') as any)._rideAtlasAdapter.map;
       let count = 0;
-      map.eachLayer((layer: any) => { if (layer.feature?.geometry?.type === 'LineString' && layer.options.weight === 3.5) count++; });
+      map.eachLayer((layer: any) => { if (layer.feature?.geometry?.type === 'LineString' && layer.options.weight < 6) count++; });
       return count;
     })).toBeGreaterThan(0);
     // Leaflet schedules canvas painting after adding overview geometry.
@@ -106,12 +106,13 @@ test('selecting a nearby route from Places hides other route lines', async ({ pa
   if (isMobile) {
     await panel.getByRole('button', { name: /Filters/ }).click();
     await page.getByRole('button', { name: 'Show map', exact: true }).click();
-    await page.waitForTimeout(550);
   }
+  // Initial framing is scheduled through 320ms; mobile sheet resizing through 500ms.
+  await page.waitForTimeout(550);
   const lineCount = () => page.evaluate(() => {
     let count = 0;
     (document.getElementById('map-canvas') as any)._rideAtlasAdapter.map.eachLayer((layer: any) => {
-      if (layer.feature?.geometry?.type === 'LineString' && layer.options.weight === 3.5) count++;
+      if (layer.feature?.geometry?.type === 'LineString' && layer.options.weight < 6) count++;
     });
     return count;
   });
@@ -119,7 +120,7 @@ test('selecting a nearby route from Places hides other route lines', async ({ pa
   await expect.poll(() => page.evaluate(() => {
     let found = false;
     (document.getElementById('map-canvas') as any)._rideAtlasAdapter.map.eachLayer((layer: any) => {
-      if (layer.feature?.properties?.title === 'Triangle' && layer.options.weight === 3.5) found = true;
+      if (layer.feature?.properties?.title === 'Triangle' && layer.options.weight < 6) found = true;
     });
     return found;
   })).toBe(true);
@@ -127,7 +128,7 @@ test('selecting a nearby route from Places hides other route lines', async ({ pa
     const map = (document.getElementById('map-canvas') as any)._rideAtlasAdapter.map;
     let coords: number[] | undefined;
     map.eachLayer((layer: any) => {
-      if (layer.feature?.properties?.title === 'Triangle' && layer.options.weight === 3.5) {
+      if (layer.feature?.properties?.title === 'Triangle' && layer.options.weight < 6) {
         const points = layer.feature.geometry.coordinates;
         coords = points[Math.floor(points.length / 4)];
       }

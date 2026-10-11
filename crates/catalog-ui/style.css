@@ -2573,3 +2573,10 @@ body {
 .detail-share-actions .share-status:empty {
   display: none;
 }
+
+/* Keep feedback readable before tiles arrive and route names safe on every basemap. */
+#startup-status { position: fixed; inset: 0; display: grid; place-items: center; color: #475569; }
+body:has(.app-layout) #startup-status { display: none; }
+.map-key, .map-tile-status { background: rgba(255,255,255,.95); color: #334155; padding: 6px 9px; border-radius: 5px; font-size: 12px; max-width: 240px; box-shadow: 0 1px 5px #0003; }
+.map-tile-status[hidden] { display: none; }
+.route-name-label { color: #111827; background: #fff; border: 1px solid #cbd5e1; font-weight: 600; width: max-content; max-width: 240px; white-space: normal; }
