@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "id": "granger-dam",
+  "title": "Granger Dam",
+  "summary": "Lakeside dam road and overlook on Granger Lake with wide views across the water.",
+  "body_markdown": "Operated by the U.S. Army Corps of Engineers on the San Gabriel River east of Granger, Granger Dam impounds Granger Lake and carries Granger Dam Road across the embankment with open views over the water and surrounding plains.",
+  "tags": [
+    "granger-lake",
+    "dam",
+    "viewpoint",
+    "sunset",
+    "stop"
+  ],
+  "sources": [
+    {
+      "title": "U.S. Army Corps of Engineers: Granger Lake",
+      "url": "https://www.swf-wc.usace.army.mil/granger/",
+      "accessed_on": "2026-10-31"
+    },
+    {
+      "title": "Granger Dam on Google Maps",
+      "url": "https://www.google.com/maps/place/Granger+Dam,+Granger,+TX+76530/@30.7010345,-97.327835,15z/",
+      "accessed_on": "2026-10-31"
+    }
+  ],
+  "photos": [],
+  "related": [
+    {
+      "kind": "route",
+      "id": "taylor-tech-corridor-granger-dam-loop"
+    }
+  ],
+  "updated_on": "2026-10-31",
+  "author_note": {
+    "visit_status": "visited",
+    "recommendation": "recommend",
+    "text": "A relaxing stop with a beautiful view over Granger Lake, especially at sunset.",
+    "updated_on": "2026-10-31"
+  },
+  "place_category": "viewpoint",
+  "coordinates": [
+    -97.327835,
+    30.7010345
+  ],
+  "address": "3100 Granger Dam Rd, Granger, TX 76530",
+  "google_place_id": null
+}

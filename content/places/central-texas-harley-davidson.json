@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "id": "central-texas-harley-davidson",
+  "title": "Central Texas Harley-Davidson",
+  "summary": "Harley-Davidson dealership and rider stop on I-35 in Round Rock.",
+  "body_markdown": "Located on the northbound I-35 frontage road in Round Rock, Central Texas Harley-Davidson carries new and pre-owned motorcycles, parts, riding gear, and apparel.",
+  "tags": [
+    "dealership",
+    "harley-davidson",
+    "round-rock",
+    "i-35",
+    "stop"
+  ],
+  "sources": [
+    {
+      "title": "Central Texas Harley-Davidson official website",
+      "url": "https://www.centraltexasharley.com/",
+      "accessed_on": "2026-10-31"
+    },
+    {
+      "title": "Central Texas Harley-Davidson on Google Maps",
+      "url": "https://www.google.com/maps/place/Central+Texas+Harley-Davidson/@30.5393519,-97.6909629,17z/",
+      "accessed_on": "2026-10-31"
+    }
+  ],
+  "photos": [],
+  "related": [
+    {
+      "kind": "route",
+      "id": "central-texas-harley-plains-loop"
+    }
+  ],
+  "updated_on": "2026-10-31",
+  "author_note": {
+    "visit_status": "visited",
+    "recommendation": "recommend",
+    "text": "A good stop to stretch your legs and explore the store.",
+    "updated_on": "2026-10-31"
+  },
+  "place_category": "stop",
+  "coordinates": [
+    -97.6909629,
+    30.5393519
+  ],
+  "address": "2801 N Interstate Hwy 35, Round Rock, TX 78664",
+  "google_place_id": null
+}

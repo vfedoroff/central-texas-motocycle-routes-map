@@ -59,3 +59,35 @@ test('slow tiles show loading feedback', async ({ page }) => {
   await expect(page.locator('#map-canvas')).toHaveClass(/leaflet-container/);
   await expect(page.locator('.map-tile-status')).toBeVisible();
 });
+
+test('Hill Country boundary layer renders in non-interactive pane and toggles on and off', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('#map-canvas')).toHaveClass(/leaflet-container/);
+  const toggleBtn = page.locator('#map-canvas .leaflet-control-hill-country');
+  await expect(toggleBtn).toBeVisible();
+  await expect(toggleBtn).toHaveAttribute('aria-pressed', 'true');
+  const paneInfo = await page.evaluate(() => {
+    const adapter = (document.querySelector('#map-canvas') as any)._rideAtlasAdapter;
+    const pane = adapter.map.getPane('hillCountryPane');
+    return {
+      hasLayer: adapter.map.hasLayer(adapter.hillCountryLayer),
+      zIndex: pane?.style.zIndex,
+      pointerEvents: getComputedStyle(pane).pointerEvents
+    };
+  });
+  expect(paneInfo.hasLayer).toBe(true);
+  expect(paneInfo.zIndex).toBe('350');
+  expect(paneInfo.pointerEvents).toBe('none');
+  await toggleBtn.dispatchEvent('click');
+  await expect(toggleBtn).toHaveAttribute('aria-pressed', 'false');
+  expect(await page.evaluate(() => {
+    const adapter = (document.querySelector('#map-canvas') as any)._rideAtlasAdapter;
+    return adapter.map.hasLayer(adapter.hillCountryLayer);
+  })).toBe(false);
+  await toggleBtn.dispatchEvent('click');
+  await expect(toggleBtn).toHaveAttribute('aria-pressed', 'true');
+  expect(await page.evaluate(() => {
+    const adapter = (document.querySelector('#map-canvas') as any)._rideAtlasAdapter;
+    return adapter.map.hasLayer(adapter.hillCountryLayer);
+  })).toBe(true);
+});

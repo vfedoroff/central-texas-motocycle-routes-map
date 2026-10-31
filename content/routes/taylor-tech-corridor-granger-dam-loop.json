@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "id": "taylor-tech-corridor-granger-dam-loop",
+  "title": "Taylor Tech Corridor & Granger Dam Loop",
+  "summary": "A 106-mile loop across the Williamson County plains past Taylor’s new tech parks and data centers, with a lakeside stop at Granger Dam.",
+  "body_markdown": "Start at the US 183 and TX-29 crossing in Liberty Hill and head south on US 183 to Leander, then ride east on RM 2243 through Georgetown and south on FM 1460 / A.W. Grimes Boulevard into Round Rock. Follow US 79 east through Hutto and Taylor past the expanding semiconductor campus, new tech parks, and large data center developments.\n\nFrom Taylor, take FM 619 and FM 1331 northeast to Granger Dam Road for a stop atop Granger Dam overlooking Granger Lake. Continue west through Granger, Walburg, and Schwertner on FM 971, TX-95, FM 972, FM 1105, CR 145, and CR 311 to Ronald Reagan Boulevard, then return to Liberty Hill via FM 3405 and US 183.",
+  "tags": [
+    "granger-dam",
+    "taylor",
+    "tech-corridor",
+    "plains",
+    "sunset",
+    "us-79",
+    "rm-2243"
+  ],
+  "sources": [
+    {
+      "title": "Google Maps itinerary supplied by the rider (snapped to US 183 / TX-29 in Liberty Hill)",
+      "url": "https://www.google.com/maps/dir/30.6537889,-97.8763539/30.620845,-97.690798/30.573034,-97.650648/30.518404,-97.655648/30.568593,-97.409583/Granger+Dam,+Granger,+TX+76530/30.755003,-97.440313/30.771923,-97.635141/30.702705,-97.852014/30.6537889,-97.8763539/",
+      "accessed_on": "2026-10-31"
+    },
+    {
+      "title": "OpenStreetMap road geometry via OSRM",
+      "url": "https://router.project-osrm.org/route/v1/driving/-97.8763539,30.6537889;-97.85877,30.59202;-97.690798,30.620845;-97.650648,30.573034;-97.655648,30.518404;-97.409583,30.568593;-97.327835,30.7010345;-97.440313,30.755003;-97.635141,30.771923;-97.852014,30.702705;-97.877385,30.707037;-97.8763539,30.6537889?overview=full&geometries=geojson&steps=true",
+      "accessed_on": "2026-10-31"
+    },
+    {
+      "title": "U.S. Army Corps of Engineers: Granger Lake and Dam",
+      "url": "https://www.swf-wc.usace.army.mil/granger/",
+      "accessed_on": "2026-10-31"
+    }
+  ],
+  "photos": [],
+  "related": [],
+  "updated_on": "2026-10-31",
+  "author_note": {
+    "visit_status": "visited",
+    "recommendation": "recommend",
+    "text": "This route follows moderate-traffic highways across the Williamson County plains, passing the new tech parks and data center developments around Taylor. Granger Dam is a great stop to relax and take in a beautiful view over the lake, especially at sunset.",
+    "updated_on": "2026-10-31"
+  },
+  "category": "Plains & Ranchlands",
+  "color": "#54278F",
+  "distance_mi": 106.0,
+  "waypoints": [
+    "US 183 / TX-29 crossing, Liberty Hill",
+    "RM 2243 (Leander Rd), Georgetown",
+    "FM 1460 / N A.W. Grimes Blvd, Round Rock",
+    "US 79, Hutto & Taylor tech corridor",
+    "Granger Dam, Granger Lake",
+    "TX-95 at FM 972, Bartlett",
+    "Ronald Reagan Blvd, Georgetown",
+    "FM 3405 at US 183, Liberty Hill",
+    "US 183 / TX-29 crossing, Liberty Hill"
+  ],
+  "via": "US 183 South -> RM 2243 East -> FM 1460 / N A.W. Grimes Blvd South -> US 79 East -> FM 619 North -> FM 1331 East -> Granger Dam Rd -> FM 971 West -> TX-95 North -> FM 972 West -> FM 1105 -> CR 145 -> CR 311 -> Ronald Reagan Blvd South -> FM 3405 West -> US 183 South",
+  "geometry_path": "content/geometry/routes/taylor-tech-corridor-granger-dam-loop.geojson",
+  "route_type": "loop",
+  "navigation_junctions": [],
+  "stops": [
+    {
+      "place_id": "granger-dam",
+      "note": "Stop atop the dam for a relaxing break and panoramic lake views, especially at sunset."
+    }
+  ]
+}

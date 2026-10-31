@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "id": "central-texas-harley-plains-loop",
+  "title": "Central Texas Harley & Plains Loop",
+  "summary": "A 77.6-mile loop from Liberty Hill to Central Texas Harley-Davidson in Round Rock, returning across the Williamson County plains via Taylor and Granger.",
+  "body_markdown": "Start at the US 183 and TX-29 crossing in Liberty Hill and head south through Leander and Cedar Park to Round Rock via US 183, E New Hope Drive, Ronald Reagan Boulevard, and RM 1431 / University Boulevard. After stopping at Central Texas Harley-Davidson off N Mays Street and the I-35 frontage road, head east on University Boulevard and Chandler Road to TX-95 near Taylor, then loop back through Granger and Georgetown across the plains via TX-29, TX-130, TX-195, Ronald Reagan Boulevard, FM 3405, and US 183.",
+  "tags": [
+    "harley-davidson",
+    "round-rock",
+    "taylor",
+    "granger",
+    "plains",
+    "tx-29",
+    "us-183"
+  ],
+  "sources": [
+    {
+      "title": "Google Maps itinerary exported via Google Maps Extended Routes GPX",
+      "url": "https://www.google.com/maps/dir/30.6537889,-97.8763539/30.53479,-97.7826865/30.5597314,-97.6863782/Central+Texas+Harley-Davidson,+2801+I+35+N+Frontage+Rd,+Round+Rock,+TX+78664/30.6153105,-97.4228517/30.6462535,-97.4401707/30.6537889,-97.8763539/",
+      "accessed_on": "2026-10-31"
+    }
+  ],
+  "photos": [],
+  "related": [],
+  "updated_on": "2026-10-31",
+  "author_note": {
+    "visit_status": "visited",
+    "recommendation": "recommend",
+    "text": "A nice ride from the TX-29 and US 183 crossing down to Central Texas Harley-Davidson to stretch my legs and explore the store, then back through the open plains landscape.",
+    "updated_on": "2026-10-31"
+  },
+  "category": "Plains & Ranchlands",
+  "color": "#9E2A2B",
+  "distance_mi": 77.6,
+  "waypoints": [
+    "US 183 / TX-29 crossing, Liberty Hill",
+    "E Whitestone Blvd at Ronald Reagan Blvd, Cedar Park",
+    "University Blvd at N Mays St, Round Rock",
+    "Central Texas Harley-Davidson, Round Rock",
+    "Chandler Rd at TX-95, Taylor",
+    "TX-95 at TX-29, Granger",
+    "US 183 / TX-29 crossing, Liberty Hill"
+  ],
+  "via": "US 183 South -> E New Hope Dr -> Ronald Reagan Blvd -> RM 1431 / University Blvd -> N Mays St -> Central Texas Harley-Davidson -> University Blvd / Chandler Rd -> TX-95 North -> TX-29 West -> TX-130 North -> TX-195 Northwest -> Ronald Reagan Blvd South -> FM 3405 West -> US 183 South",
+  "geometry_path": "content/geometry/routes/central-texas-harley-plains-loop.geojson",
+  "route_type": "loop",
+  "navigation_junctions": [],
+  "stops": [
+    {
+      "place_id": "central-texas-harley-davidson",
+      "note": "Stop to stretch your legs and explore the dealership store."
+    }
+  ]
+}

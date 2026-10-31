@@ -2580,3 +2580,41 @@ body:has(.app-layout) #startup-status { display: none; }
 .map-key, .map-tile-status { background: rgba(255,255,255,.95); color: #334155; padding: 6px 9px; border-radius: 5px; font-size: 12px; max-width: 240px; box-shadow: 0 1px 5px #0003; }
 .map-tile-status[hidden] { display: none; }
 .route-name-label { color: #111827; background: #fff; border: 1px solid #cbd5e1; font-weight: 600; width: max-content; max-width: 240px; white-space: normal; }
+.leaflet-hillCountryPane-pane { pointer-events: none; }
+.leaflet-control-hill-country {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 4px 10px;
+  background-color: rgba(255, 255, 255, 0.95);
+  color: #475569;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  background-clip: padding-box;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+}
+.leaflet-control-hill-country:hover {
+  background-color: #f8fafc;
+}
+.leaflet-control-hill-country.is-active {
+  background-color: #fffbeb;
+  color: #6b3f19;
+  border-color: rgba(124, 74, 30, 0.65);
+}
+.hill-country-swatch {
+  width: 14px;
+  height: 10px;
+  border-radius: 2px;
+  border: 1.5px dashed #7c4a1e;
+  background-color: rgba(180, 83, 9, 0.14);
+  flex-shrink: 0;
+}
+.leaflet-control-hill-country:not(.is-active) .hill-country-swatch {
+  opacity: 0.45;
+}
